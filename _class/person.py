@@ -1,8 +1,7 @@
-from abc import ABC, ABCMeta, abstractmethod
 import random
-from territory import Territory
-from animal import Animal
-from tracker import Tracker
+from .territory import Territory
+from .animal import Animal
+from .tracker import Tracker
 
 class Person():
   def __init__(self, name: str, email: str, celphone: str, id: None | int = None) -> None:
@@ -53,22 +52,28 @@ class User(Person):
 class Admin(Person):
   def __init__(self, name: str, email: str, celphone: str, id: int | None = None) -> None:
     super().__init__(name, email, celphone, id)
-    self.user_list = None
+    self.user_list = []
   
   def add_animal(self, name: str, specie: str, age: int, tracker: Tracker, territory: Territory, description: str = "No Description") -> bool:
     animal = Animal(name, specie, age, tracker, territory, description)
     if animal:
+      territory.add_animal(animal)
       print("Animal adicionado com sucesso!!!")
       return True
     print("Falha ao adicionar o animal!!!")
     return False
+    
   def add_user(self, name: str, email: str, celphone: str, territory: Territory, id: None | int = None) -> bool:
     user = User(name, email, celphone, territory, id)
     if user:
+      self.user_list.append(user)
+      territory.add_owner(user)
       print("Usúario adicionado com sucesso!!!")
       return True
     print("Falha ao adicionar o usúario!!!")
     return False
+
+  
   
 if __name__ == "__main__":
   admin = Admin("Rogerio", "rogerio@gmail.com", "9233-9483")
@@ -83,5 +88,5 @@ if __name__ == "__main__":
   
   print(admin)
   
-  
-  
+  for user in admin.user_list:
+    print(user)

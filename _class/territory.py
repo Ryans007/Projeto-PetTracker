@@ -1,11 +1,27 @@
+from .animal import Animal
+from .person import User
+
 class Territory():
-  def __init__(self, nome: str, x1: int, x2: int, y1: int, y2: int) -> None:
-    pass
- 
+  def __init__(self, name: str, x1: int, x2: int, y1: int, y2: int, owner: None | User = None) -> None:
+    self.name = name
+    self.x1 = x1
+    self.x2 = x2
+    self.y1 = y1 
+    self.y2 = y2
+    self.owner = owner
+    self.animals = []
+    
+  def add_owner(self, owner: User) -> None:
+    self.owner = owner
+    
+  def add_animal(self, animal: Animal) -> None:
+    self.animals.append(animal)
+
 if __name__ == "__main__": 
   print(104*"*")  
   for _ in range(20):
     print("*", 100*" ", "*")
   print(104*"*")
+  
 
 
