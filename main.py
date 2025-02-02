@@ -1,4 +1,6 @@
-from _class.person import *
+from _class.person import Admin
+from _class.territory import Territory
+from _class.tracker import Tracker
 
 def main():
   admin = Admin("Rogerio", "rogerio@gmail.com", "9233-9483")

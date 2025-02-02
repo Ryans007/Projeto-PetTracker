@@ -1,8 +1,5 @@
-from .animal import Animal
-from .person import User
-
 class Territory():
-  def __init__(self, name: str, x1: int, x2: int, y1: int, y2: int, owner: None | User = None) -> None:
+  def __init__(self, name: str, x1: int, x2: int, y1: int, y2: int, owner = None) -> None:
     self.name = name
     self.x1 = x1
     self.x2 = x2
@@ -11,10 +8,10 @@ class Territory():
     self.owner = owner
     self.animals = []
     
-  def add_owner(self, owner: User) -> None:
+  def add_owner(self, owner) -> None:
     self.owner = owner
     
-  def add_animal(self, animal: Animal) -> None:
+  def add_animal(self, animal) -> None:
     self.animals.append(animal)
 
 if __name__ == "__main__": 

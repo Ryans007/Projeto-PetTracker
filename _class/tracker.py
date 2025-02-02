@@ -3,7 +3,7 @@ from datetime import datetime
 import random
 from typing import Tuple
 import time
-from .location import Location
+from _class.location import Location
 
 class Tracker():
   def __init__(self, state: bool, id: int | None = None) -> None:

@@ -1,7 +1,7 @@
+from _class.territory import Territory
+from _class.animal import Animal
+from _class.tracker import Tracker
 import random
-from .territory import Territory
-from .animal import Animal
-from .tracker import Tracker
 
 class Person():
   def __init__(self, name: str, email: str, celphone: str, id: None | int = None) -> None:
