@@ -1,5 +1,5 @@
 class Territory():
-  def __init__(self, id: int, nome: str, x1: int, x2: int, y1: int, y2: int) -> None:
+  def __init__(self, nome: str, x1: int, x2: int, y1: int, y2: int) -> None:
     pass
  
 if __name__ == "__main__": 

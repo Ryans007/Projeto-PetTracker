@@ -1,18 +1,28 @@
+from ast import Tuple
 from datetime import datetime
 import random
-from typing import List
-
-class Datetime(datetime):
-  def __init__(self) -> None:
-    super().__init__()
+from typing import Tuple
+import time
+from location import Location
 
 class Tracker():
-  def __init__(self, id: int, state: bool, last_upgrade: Datetime, animal_id: int) -> None:
-    pass
-  def location_generate(self) -> List[int]:
-    x = random.randint(0, 500)
-    y = random.randint(0,500)
-    
-    actual_location = [x,y]
-    
-    return actual_location
+  def __init__(self, state: bool, id: int | None = None) -> None:
+    if id is None:
+      self.id = random.randint(0, 500)
+    else:
+      self.id = id
+    self.state = state
+    self.last_update = None
+    self.location = Location()
+  
+  def location_generate(self) -> Tuple[int, int]:
+    while True:
+      x = random.randint(0, 500)
+      y = random.randint(0,500)
+      
+      time.sleep(30)
+      self.last_update = datetime.now()
+      
+      self.location.update_coordinated((x,y))
+
+
