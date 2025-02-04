@@ -53,7 +53,7 @@ class Admin(Person):
   def __init__(self, name: str, email: str, celphone: str, id: int | None = None) -> None:
     super().__init__(name, email, celphone, id)
     self.user_list = []
-  
+    
   def add_animal(self, name: str, specie: str, age: int, tracker: Tracker, territory: Territory, description: str = "No Description") -> bool:
     animal = Animal(name, specie, age, tracker, territory, description)
     if animal:
@@ -74,19 +74,3 @@ class Admin(Person):
     return False
 
   
-  
-if __name__ == "__main__":
-  admin = Admin("Rogerio", "rogerio@gmail.com", "9233-9483")
-  
-  territory = Territory("IFPB", 23, 45, 50, 70)
-  
-  tracker = Tracker(id = 12, state = True)
-  
-  admin.add_animal("Pedro", "Gato", 12, tracker, territory)
-  
-  admin.add_user("Gabriel", "gabriel@gmail.com", "7645-3657", territory)
-  
-  print(admin)
-  
-  for user in admin.user_list:
-    print(user)
