@@ -15,7 +15,8 @@ class Territory():
     
   def add_animal(self, animal) -> None:
     self.animals.append(animal)
-    
+
+      
   def show_territory(self):
     def func_to_show(stdscr):
       try:
@@ -69,7 +70,7 @@ class Territory():
                 x += 1
             
             """
-                Linha 0: ####################  <- Parede de cima
+              Linha 0: ####################  <- Parede de cima
               Linha 1: #                  #
               Linha 2: #        *         #  <- Bichinho aqui (y = 2)
               Linha 3: #                  #

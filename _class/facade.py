@@ -2,7 +2,8 @@ from _class.territory import Territory
 from _class.animal import Animal
 from _class.tracker import Tracker
 from _class.person import Admin, User
-import random
+#import random
+import sqlite3
 
 class SystemFacade:
     def __init__(self):
