@@ -56,7 +56,7 @@ def admin_menu(facade):
         print("2 - Criar Território")
         print("3 - Adicionar Usuário")
         print("4 - Adicionar Animal")
-        print("5 - Vizulizar Animais")
+        print("5 - Visualizar Animais")
         print("6 - Voltar ao Menu Principal")
         print("7 - Encerrar Programa")
 
@@ -131,20 +131,34 @@ def admin_menu(facade):
             print(f"Usuário adicionado com sucesso!")
 
         elif admin_input == 4:
-            clear_screen()
-            print("------------------------------ Animais Cadastrados ------------------------------")
-            animais = facade.list_animais()
-            print("Territórios cadastrados: ")
-            for animais in territoanimaisries:
-                print(f"ID: {animais[0]}, Nome: {animais[1]}, Espécie: {animais[2]}, Idade: {animais[3]}, Descrição: {animais[4]}")
-
-        elif admin_input == 5:
             animal_name = input("\nNome do animal: ")
             animal_specie = input("Espécie do animal: ")
             animal_age = int(input("Idade do animal: "))
             territory_id = int(input("ID do território: "))
             facade.add_animal_to_territory(animal_name, animal_specie, animal_age, territory_id)
             print(f"Animal adicionado com sucesso!")
+
+        elif admin_input == 5:
+            clear_screen()
+            print("------------------------------ Animais Cadastrados ------------------------------")
+            animais = facade.list_animais()
+            print("Animais cadastrados: ")
+            for animais in animais:
+                print(f"ID: {animais[0]}, Nome: {animais[1]}, Espécie: {animais[2]}, Idade: {animais[3]}, Descrição: {animais[4]}, ID território: {animais[5]},ID rastreador: {animais[6]}")
+
+            print("\n1 - Voltar ao Menu Admin")
+            print("2 - Encerrar Programa")
+
+            try:
+                user_input = int(input("Escolha sua opção: "))
+            except ValueError:
+                print("Opção inválida! Digite um número.")
+                continue
+
+            if user_input == 1:
+                admin_menu(facade)
+            elif user_input == 2:
+                exit()        
 
         elif admin_input == 6:
             return

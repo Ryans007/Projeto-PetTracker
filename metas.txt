@@ -19,6 +19,7 @@ Tarefas a fazer:
 18 - Implementar (Inserir Dados do Dispositivo de Rastreamento)
 19 - Adicionar lógica da criação do usuário
 20 - No momento da criação do usuário, exibir os territórios que ainda estão sem dono
+21 - Implementar uma logica para colocar descrição no animal 
 
 
 Tarefas feitas:
