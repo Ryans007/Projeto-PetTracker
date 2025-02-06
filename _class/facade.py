@@ -13,10 +13,13 @@ class SystemFacade:
         self.cursor = self.conn.cursor()
 
     def create_admin(self, name: str, email: str, password: str,celphone: str):
+
+        admin = Admin(name, email, password, celphone)
+
         self.cursor.execute('''
         INSERT INTO admins (name, email, password,celphone)
         VALUES (?, ?, ?, ?)
-        ''', (name, email, password, celphone))
+        ''', (admin.name, email, password, celphone))
         self.conn.commit()
 
     def create_user(self, name: str, email: str, celphone: str, territory_id: int):
@@ -59,8 +62,9 @@ class SystemFacade:
     def close_connection(self):
         self.conn.close()
 
-    def show_territory(self, territory: Territory):
-        territory.show_territory()        
+    @staticmethod
+    def show_territory(largura: int, altura: int):
+        Territory.show_territory(largura, altura)        
 
     def get_admin_by_email(self, email: str):
         self.cursor.execute("SELECT * FROM admins WHERE email = ?", (email,))

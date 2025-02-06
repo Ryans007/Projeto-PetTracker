@@ -4,13 +4,14 @@ from _class.tracker import Tracker
 import random
 
 class Person():
-  def __init__(self, name: str, email: str, celphone: str, id: None | int = None) -> None:
+  def __init__(self, name: str, email: str, password: str, celphone: str, id: None | int = None) -> None:
     if id is None:
       self.__id = random.randint(0, 500)
     else:
       self.__id = id
     self.__name = name
     self.__email = email
+    self.__password = password
     self.__celphone = celphone
   
   @property
@@ -36,6 +37,14 @@ class Person():
   @celphone.setter
   def celphone(self, celphone) -> None:
     self.__celphone = celphone
+
+  @property
+  def password(self) -> str:
+    return self.__password
+  
+  @password.setter
+  def password(self, password) -> None:
+    self.__password = password
     
   # def vizualize_animal(self) -> Location: pass
   
@@ -45,8 +54,8 @@ class Person():
     return f"{type(self).__name__}({self.__name!r}, {self.__email!r}, {self.__celphone}, {self.__id})"
 
 class User(Person):
-  def __init__(self, name: str, email: str, celphone: str, territory: Territory, id: None | int = None) -> None:
-    super().__init__(name, email, celphone, id)
+  def __init__(self, name: str, email: str, password: str, celphone: str, territory: Territory, id: None | int = None) -> None:
+    super().__init__(name, email, password, celphone, id)
     self.territory = territory
   
 class Admin(Person):

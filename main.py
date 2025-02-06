@@ -1,5 +1,6 @@
 from _class.facade import SystemFacade
 import os
+import time
 
 def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
@@ -66,10 +67,10 @@ def admin_menu(facade):
 
         if admin_input == 1:
             print(f"\n------------------------------ Territórios ------------------------------")
-            # territories = facade.list_territories()
-            # print("Territórios cadastrados: ")
-            # for territory in territories:
-            #     print(f"ID: {territory[0]}, Nome: {territory[1]}, X: {territory[2]}, Y: {territory[3]}")
+            territories = facade.list_territories()
+            print("Territórios cadastrados: ")
+            for territory in territories:
+                print(f"ID: {territory[0]}, Nome: {territory[1]}, X: {territory[2]}, Y: {territory[3]}")
 
             print("\n1 - Visualizar Território")
             print("2 - Voltar ao Menu Admin")
@@ -82,25 +83,27 @@ def admin_menu(facade):
                 continue
 
             if user_input == 1:
-                print(facade.show_territory(territory))
+                #print(facade.show_territory(territory))
 
-                # try:
-                #     territory_id = int(input("Digite o ID do território que deseja visualizar: "))
+                try:
+                    territory_id = int(input("Digite o ID do território que deseja visualizar: "))
 
-                #     territory = None
-                #     for t in territories:
-                #         if t[0] == territory_id:  
-                #             territory = t
-                #             break
+                    territory = None
+                    for t in territories:
+                        if t[0] == territory_id:  
+                            territory = t
+                            break
 
-                #     if territory:
-                #         print(f"Visualizando território ID {territory[0]} - {territory[1]}")
-                #         print(territory)
-                #         print(facade.show_territory(territory))
-                #     else:
-                #         print("Território não encontrado!")
-                # except ValueError:
-                #     print("ID inválido! Digite um número.")    
+                    if territory:
+                        print(f"Visualizando território ID {territory[0]} - {territory[1]}")
+                        #print(territory)
+                        #print(facade.show_territory(territory[2], territory[3]))
+                        facade.show_territory(territory[2], territory[3])
+                        time.sleep(10)
+                    else:
+                        print("Território não encontrado!")
+                except ValueError:
+                    print("ID inválido! Digite um número.")    
                            
             elif user_input == 2:
                 admin_menu(facade)
