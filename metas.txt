@@ -1,0 +1,26 @@
+Tarefas a fazer:
+1 - Senha com asterisco
+2 - Ver como salvar uma senha da forma correta
+3 - Inserir X2 e Y2 no território
+4 - Revisar a lógica do envio da localização e do objeto localização
+5 - Implementar uma logica paralela de envio de localização periódica de vários animais
+6 - Ajeitar a função de show_territory
+7 - Implementar o envio das localização para ser mostrada no território (possivelmente com observer)
+8 - Revisar o Facade
+9 - Implementar Factory ou algum padrão de criação
+10 - Revisar a implementação do banco de dados
+11 - Adicionar a tabela de usuário ao banco de dados
+12 - Implementar o registro e consultas de ocorrências
+13 - Implementar a remoção de animal/usuário
+14 - Implementar o login do usuário
+15 - Implementar o menu do usuário
+16 - Revisar o código das classes
+17 - Implementar os padrões que faltam (observer, Factory, composite, proxy, singleton)
+18 - Implementar (Inserir Dados do Dispositivo de Rastreamento)
+
+
+Tarefas feitas:
+1 - Registro de Animal
+2 - Acesso ao sistema
+3 - Cadastro do Administrador
+4 - Gerenciar Perfil do Administrador

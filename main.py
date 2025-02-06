@@ -66,6 +66,7 @@ def admin_menu(facade):
             continue
 
         if admin_input == 1:
+            clear_screen()
             print(f"\n------------------------------ Territórios ------------------------------")
             territories = facade.list_territories()
             print("Territórios cadastrados: ")
