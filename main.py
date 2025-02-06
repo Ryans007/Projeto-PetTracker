@@ -1,13 +1,15 @@
+from _class.facade import SystemFacade
 import os
-from _class.facade import SystemFacade  # Importando o Facade
-
-
-facade = SystemFacade()
 
 def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
 
 def home_screen():
+    facade = SystemFacade()
+
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! GAMBIARRA não mexer se não for ajeitar :D
+    #já ta criado no banco de dados, só descomentar essa linha se precisar criar a adm dnv
+    #facade.create_admin("admin", "admin@admin.com", "admin", "83 40028922")
     while True:
         clear_screen()
         print("------------------------------ PetTracker ------------------------------")
@@ -21,22 +23,24 @@ def home_screen():
             continue
 
         if user_input == 1:
-            login_screen()
+            login_screen(facade)
         elif user_input == 2:
             print("Encerrando o programa...")
+            facade.close_connection()
             exit()
         else:
             print("Opção inválida! Tente novamente.")
 
-def login_screen():
+def login_screen(facade):
     while True:
         clear_screen()
         print("\n------------------------------ Fazer Login ------------------------------")
         email = input("Digite seu e-mail: ")
         senha = input("Digite sua senha: ")
 
-        # Verificação simples de login com admin
-        if email == "admin" and senha == "admin":
+        admin = facade.get_admin_by_email(email)
+
+        if admin and admin[3] == senha:
             print(f"Login realizado como Administrador: {email}")
             admin_menu(facade)
             break
@@ -44,21 +48,7 @@ def login_screen():
             print("Login ou senha inválidos, tente novamente.")
 
 def admin_menu(facade):
-    territory = None
-
     while True:
-
-        if territory is None:
-            print("\n------------------------------ Cadastro de Território ------------------------------")
-            territory_name = input("Nome do território: ")
-            territory_h = int(input("Altura do território: "))
-            territory_w = int(input("Largura do território: "))
-            
-            territory = facade.create_territory(territory_name, territory_h, territory_w)
-            print(f"Território '{territory_name}' criado com sucesso!")
-            continue 
-
-
         clear_screen()
         print(f"\n------------------------------ Menu do Administrador ------------------------------")
         print("1 - Visualizar Territórios")
@@ -75,8 +65,13 @@ def admin_menu(facade):
             continue
 
         if admin_input == 1:
-            print("\n------------------------------ Territórios Cadastrados ------------------------------")                      
-            print("1 - Visualizar Animais")
+            print(f"\n------------------------------ Territórios ------------------------------")
+            # territories = facade.list_territories()
+            # print("Territórios cadastrados: ")
+            # for territory in territories:
+            #     print(f"ID: {territory[0]}, Nome: {territory[1]}, X: {territory[2]}, Y: {territory[3]}")
+
+            print("\n1 - Visualizar Território")
             print("2 - Voltar ao Menu Admin")
             print("3 - Encerrar Programa")
 
@@ -85,90 +80,66 @@ def admin_menu(facade):
             except ValueError:
                 print("Opção inválida! Digite um número.")
                 continue
-            
+
             if user_input == 1:
-                #territory = user.territory
                 print(facade.show_territory(territory))
 
+                # try:
+                #     territory_id = int(input("Digite o ID do território que deseja visualizar: "))
+
+                #     territory = None
+                #     for t in territories:
+                #         if t[0] == territory_id:  
+                #             territory = t
+                #             break
+
+                #     if territory:
+                #         print(f"Visualizando território ID {territory[0]} - {territory[1]}")
+                #         print(territory)
+                #         print(facade.show_territory(territory))
+                #     else:
+                #         print("Território não encontrado!")
+                # except ValueError:
+                #     print("ID inválido! Digite um número.")    
+                           
             elif user_input == 2:
-                admin_menu()  
+                admin_menu(facade)
 
             elif user_input == 3:
                 print("Encerrando o programa...")
-                exit()
+                exit() 
+            
 
         elif admin_input == 2:
             territory_name = input("\nNome do território: ")
-            territory_h = int(input("Altura do território: "))
-            territory_w = int(input("Largura do território: "))
-
-            territory = facade.create_territory(territory_name, territory_h, territory_w)
+            territory_x = int(input("Coordenada X do território: "))
+            territory_y = int(input("Coordenada Y do território: "))
+            facade.create_territory(territory_name, territory_x, territory_y)
             print(f"Território criado com sucesso!")
 
         elif admin_input == 3:
             user_name = input("\nNome do usuário: ")
             user_email = input("E-mail do usuário: ")
             user_celphone = input("Celular do usuário: ")
-
-            user = facade.create_user(user_name, user_email, user_celphone, territory)
-
-            admin_menu(facade)
-
-            #territory_name = input("Nome do território onde o usuário será cadastrado: ")
-            
-            #if territory:
-                #user = facade.create_user(user_name, user_email, user_celphone, territory)
-                #print(f"Usuário adicionado ao território.")
-            #else:
-                #print("Território não encontrado!")
+            territory_id = int(input("ID do território: "))
+            facade.create_user(user_name, user_email, user_celphone, territory_id)
+            print(f"Usuário adicionado com sucesso!")
 
         elif admin_input == 4:
             animal_name = input("\nNome do animal: ")
-            animal_race = input("Tipo de animal: ")
+            animal_specie = input("Espécie do animal: ")
             animal_age = int(input("Idade do animal: "))
-
-            #territory_name = input("Nome do território onde o animal será cadastrado: ")
-            #territory = facade.get_territory_by_name(territory_name)
-
-            #if territory:
-                #facade.add_animal_to_territory(admin, animal_name, animal_race, animal_age, territory)
-                #print(f"Animal {animal_name} adicionado ao território.")
-            #else:
-                #print("Território não encontrado!")
+            territory_id = int(input("ID do território: "))
+            facade.add_animal_to_territory(animal_name, animal_specie, animal_age, territory_id)
+            print(f"Animal adicionado com sucesso!")
 
         elif admin_input == 5:
-            return  
+            return
 
         elif admin_input == 6:
             print("Encerrando o programa...")
-            exit()
-
-def user_menu(user, territory):
-    while True:
-        clear_screen()
-        print(f"\n------------------------------ Vizualizar animais ------------------------------")
-        print("1 - Visualizar Animais")
-        print("2 - Voltar ao Menu Principal")
-        print("3 - Encerrar Programa")
-
-        try:
-            user_input = int(input("Escolha sua opção: "))
-        except ValueError:
-            print("Opção inválida! Digite um número.")
-            continue
-
-        if user_input == 1:
-            #territory = user.territory
-            print(facade.show_territory(territory))
-
-        elif user_input == 2:
-            return  
-
-        elif user_input == 3:
-            print("Encerrando o programa...")
+            facade.close_connection()
             exit()
 
 if __name__ == "__main__":
     home_screen()
-    
-

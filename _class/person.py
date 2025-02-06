@@ -50,8 +50,8 @@ class User(Person):
     self.territory = territory
   
 class Admin(Person):
-  def __init__(self, name: str, email: str, celphone: str, id: int | None = None) -> None:
-    super().__init__(name, email, celphone, id)
+  def __init__(self, name: str, email: str, password: str, celphone: str, id: int | None = None) -> None:
+    super().__init__(name, email, password, celphone, id)
     self.user_list = []
     
   def add_animal(self, name: str, specie: str, age: int, tracker: Tracker, territory: Territory, description: str = "No Description") -> bool:
