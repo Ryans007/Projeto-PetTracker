@@ -54,6 +54,10 @@ class SystemFacade:
     def list_territories(self):
         self.cursor.execute('SELECT * FROM territories')
         return self.cursor.fetchall()
+    
+    def list_animais(self):
+        self.cursor.execute('SELECT * From animals')
+        return self.cursor.fetchall()
 
     def list_animals_in_territory(self, territory_id: int):
         self.cursor.execute('SELECT * FROM animals WHERE territory_id = ?', (territory_id,))

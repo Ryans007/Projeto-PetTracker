@@ -17,6 +17,8 @@ Tarefas a fazer:
 16 - Revisar o código das classes
 17 - Implementar os padrões que faltam (observer, Factory, composite, proxy, singleton)
 18 - Implementar (Inserir Dados do Dispositivo de Rastreamento)
+19 - Adicionar lógica da criação do usuário
+20 - No momento da criação do usuário, exibir os territórios que ainda estão sem dono
 
 
 Tarefas feitas:

@@ -56,8 +56,9 @@ def admin_menu(facade):
         print("2 - Criar Território")
         print("3 - Adicionar Usuário")
         print("4 - Adicionar Animal")
-        print("5 - Voltar ao Menu Principal")
-        print("6 - Encerrar Programa")
+        print("5 - Vizulizar Animais")
+        print("6 - Voltar ao Menu Principal")
+        print("7 - Encerrar Programa")
 
         try:
             admin_input = int(input("Escolha sua opção: "))
@@ -67,7 +68,7 @@ def admin_menu(facade):
 
         if admin_input == 1:
             clear_screen()
-            print(f"\n------------------------------ Territórios ------------------------------")
+            print(f"------------------------------ Territórios ------------------------------")
             territories = facade.list_territories()
             print("Territórios cadastrados: ")
             for territory in territories:
@@ -130,6 +131,14 @@ def admin_menu(facade):
             print(f"Usuário adicionado com sucesso!")
 
         elif admin_input == 4:
+            clear_screen()
+            print("------------------------------ Animais Cadastrados ------------------------------")
+            animais = facade.list_animais()
+            print("Territórios cadastrados: ")
+            for animais in territoanimaisries:
+                print(f"ID: {animais[0]}, Nome: {animais[1]}, Espécie: {animais[2]}, Idade: {animais[3]}, Descrição: {animais[4]}")
+
+        elif admin_input == 5:
             animal_name = input("\nNome do animal: ")
             animal_specie = input("Espécie do animal: ")
             animal_age = int(input("Idade do animal: "))
@@ -137,10 +146,10 @@ def admin_menu(facade):
             facade.add_animal_to_territory(animal_name, animal_specie, animal_age, territory_id)
             print(f"Animal adicionado com sucesso!")
 
-        elif admin_input == 5:
+        elif admin_input == 6:
             return
 
-        elif admin_input == 6:
+        elif admin_input == 7:
             print("Encerrando o programa...")
             facade.close_connection()
             exit()
