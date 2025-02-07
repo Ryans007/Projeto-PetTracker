@@ -8,7 +8,7 @@ def database_init():
         conn = sqlite3.connect("pettracker.db")
         cursor = conn.cursor()
 
-        #tabela de admins
+        # tabela de admins
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS admins (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -16,10 +16,22 @@ def database_init():
             email TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
             celphone TEXT NOT NULL
-                    )
-                    ''')
+        )
+        ''')
         
-        #tabela de territorios
+        # tabela de usuários
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL,
+            celphone TEXT NOT NULL UNIQUE,
+            territory_id INTEGER,
+        )
+        ''')
+        
+        # tabela de territorios
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS territories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,7 +43,7 @@ def database_init():
         )
         ''')
 
-        #tababela de animais
+        #tabela de animais
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS animals (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

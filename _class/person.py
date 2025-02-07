@@ -1,3 +1,4 @@
+# type: ignore
 from _class.territory import Territory
 from _class.animal import Animal
 from _class.tracker import Tracker
