@@ -1,5 +1,5 @@
 Tarefas a fazer:
-1 - Senha com asterisco
+1 - Senha com asterisco ✅
 2 - Ver como salvar uma senha da forma correta
 3 - Inserir X2 e Y2 no território
 4 - Revisar a lógica do envio da localização e do objeto localização
@@ -27,3 +27,4 @@ Tarefas feitas:
 2 - Acesso ao sistema
 3 - Cadastro do Administrador
 4 - Gerenciar Perfil do Administrador
+5 - Senha com asterisco

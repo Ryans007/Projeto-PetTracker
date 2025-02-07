@@ -1,6 +1,7 @@
 from _class.facade import SystemFacade
 import os
 import time
+import pwinput
 
 def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
@@ -37,7 +38,7 @@ def login_screen(facade):
         clear_screen()
         print("\n------------------------------ Fazer Login ------------------------------")
         email = input("Digite seu e-mail: ")
-        senha = input("Digite sua senha: ")
+        senha = pwinput.pwinput(prompt="Digite sua senha: ", mask="*")
 
         admin = facade.get_admin_by_email(email)
 
