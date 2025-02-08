@@ -1,4 +1,4 @@
-from _class.facade import SystemFacade
+from patterns.facade import SystemFacade
 import os
 import time
 import pwinput
