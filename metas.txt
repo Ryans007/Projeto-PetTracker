@@ -1,6 +1,6 @@
 Tarefas a fazer:
 1 - Senha com asterisco ✅
-2 - Ver como salvar uma senha da forma correta *****
+2 - Ver como salvar uma senha da forma correta ✅
 3 - Inserir X2 e Y2 no território
 4 - Revisar a lógica do envio da localização e do objeto localização
 5 - Implementar uma logica paralela de envio de localização periódica de vários animais
@@ -17,7 +17,7 @@ Tarefas a fazer:
 16 - Revisar o código das classes
 17 - Implementar os padrões que faltam (observer, Factory, composite, proxy, singleton)
 18 - Implementar (Inserir Dados do Dispositivo de Rastreamento)
-19 - Adicionar lógica da criação do usuário ****
+19 - Adicionar lógica da criação do usuário ✅
 20 - No momento da criação do usuário, exibir os territórios que ainda estão sem dono
 21 - Implementar uma logica para colocar descrição no animal ***
 

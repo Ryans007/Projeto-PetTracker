@@ -58,8 +58,9 @@ def admin_menu(facade):
         print("3 - Adicionar Usuário")
         print("4 - Adicionar Animal")
         print("5 - Visualizar Animais")
-        print("6 - Voltar ao Menu Principal")
-        print("7 - Encerrar Programa")
+        print("6 - Visualizar Usuários")
+        print("7 - Voltar ao Menu Principal")
+        print("8 - Encerrar Programa")
 
         try:
             admin_input = int(input("Escolha sua opção: "))
@@ -125,10 +126,11 @@ def admin_menu(facade):
 
         elif admin_input == 3:
             user_name = input("\nNome do usuário: ")
+            user_password = input("Senha do usuário: ")
             user_email = input("E-mail do usuário: ")
             user_celphone = input("Celular do usuário: ")
             territory_id = int(input("ID do território: "))
-            facade.create_user(user_name, user_email, user_celphone, territory_id)
+            facade.create_user(user_name, user_password, user_email, user_celphone, territory_id)
             print(f"Usuário adicionado com sucesso!")
 
         elif admin_input == 4:
@@ -162,9 +164,25 @@ def admin_menu(facade):
                 exit()        
 
         elif admin_input == 6:
-            return
+            clear_screen()
+            print("------------------------------ Usuários Cadastrados ------------------------------")
+            users = facade.list_users()
+            print("Usuários cadastrados: ")
+            for users in users:
+                print(f"ID: {users[0]}, Nome: {users[1]}, E-mail: {users[2]}, Celular: {users[4]}")
 
+            print("\n1 - Voltar ao Menu Admin")
+            print("2 - Encerrar Programa")
+
+            try:
+                user_input = int(input("Escolha sua opção: "))
+            except ValueError:
+                print("Opção inválida! Digite um número.")
+                continue
         elif admin_input == 7:
+            home_screen()
+
+        elif admin_input == 8:
             print("Encerrando o programa...")
             facade.close_connection()
             exit()

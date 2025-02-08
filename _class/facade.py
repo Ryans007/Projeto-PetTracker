@@ -4,6 +4,8 @@ from _class.tracker import Tracker
 from _class.person import Admin, User
 #import random
 import sqlite3
+from utils import hash_password
+
 from database.database import database_init
 
 class SystemFacade:
@@ -13,20 +15,24 @@ class SystemFacade:
         self.cursor = self.conn.cursor()
 
     def create_admin(self, name: str, email: str, password: str,celphone: str):
-
+        
         admin = Admin(name, email, password, celphone)
-
+        hashed_password = hash_password(password)
+        
         self.cursor.execute('''
         INSERT INTO admins (name, email, password,celphone)
         VALUES (?, ?, ?, ?)
-        ''', (admin.name, email, password, celphone))
+        ''', (admin.name, email, hashed_password, celphone))
         self.conn.commit()
 
-    def create_user(self, name: str, email: str, celphone: str, territory_id: int):
+    def create_user(self, name: str, password: str, email: str, celphone: str, territory_id: int):
+        
+        hashed_password = hash_password(password)
+        
         self.cursor.execute('''
-        INSERT INTO users (name, email, celphone, territory_id)
-        VALUES (?, ?, ?, ?)
-        ''', (name, email, celphone, territory_id))
+        INSERT INTO users (name, password, email, celphone, territory_id)
+        VALUES (?, ?, ?, ?, ?)
+        ''', (name, hashed_password, email, celphone, territory_id))
         self.conn.commit()
 
     def create_territory(self, name: str, x: int, y: int):

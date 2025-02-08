@@ -21,13 +21,13 @@ def database_init():
         
         # tabela de usuários
         cursor.execute('''
-        CREATE TABLE IF NOT EXISTS usuarios (
+        CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
             celphone TEXT NOT NULL UNIQUE,
-            territory_id INTEGER,
+            territory_id INTEGER
         )
         ''')
         
