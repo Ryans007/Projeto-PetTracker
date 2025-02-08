@@ -3,9 +3,7 @@ import os
 import time
 import pwinput
 from termcolor import colored
-
-def clear_screen():
-    os.system("cls" if os.name == "nt" else "clear")
+from utils import clear_screen
 
 def home_screen():
     facade = SystemFacade()
