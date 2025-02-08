@@ -2,6 +2,7 @@ from patterns.facade import SystemFacade
 import os
 import time
 import pwinput
+from termcolor import colored
 
 def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
@@ -84,8 +85,9 @@ def admin_menu(facade):
 
             print("\n1 - Visualizar Território")
             print("2 - Criar Território")
-            print("3 - Voltar ao Menu Admin")
-            print("4 - Encerrar Programa")
+            print("3 - Deletar Território")
+            print("4 - Voltar ao Menu Admin")
+            print("5 - Encerrar Programa")
 
             try:
                 user_input = int(input("Escolha sua opção: "))
@@ -94,7 +96,6 @@ def admin_menu(facade):
                 continue
             if user_input == 1:
                 #print(facade.show_territory(territory))
-
                 try:
                     territory_id = int(input("Digite o ID do território que deseja visualizar: "))
 
@@ -110,21 +111,33 @@ def admin_menu(facade):
                         facade.show_territory(territory[2], territory[3])
                         time.sleep(10)
                     else:
-                        print("Território não encontrado!")
+                        print(colored("Território não encontrado!", "red"))
                 except ValueError:
                     print("ID inválido! Digite um número.")    
               
             elif user_input == 2:
-              clear_screen()
-              print(f"------------------------------ Novo Território ------------------------------")
-              territory_name = input("\nNome do território: ")
-              territory_x = int(input("Coordenada X do território: "))
-              territory_y = int(input("Coordenada Y do território: "))
-              facade.create_territory(territory_name, territory_x, territory_y)
-              print(f"Território criado com sucesso!")        
+                clear_screen()
+                print(f"------------------------------ Novo Território ------------------------------")
+                territory_name = input("\nNome do território: ")
+                territory_x = int(input("Coordenada X do território: "))
+                territory_y = int(input("Coordenada Y do território: "))
+                facade.create_territory(territory_name, territory_x, territory_y)
+                print(colored("Território criado com sucesso!", "green"))
+                time.sleep(1.5)
             elif user_input == 3:
-                admin_menu(facade)
+                clear_screen()
+                print(f"------------------------------ Excluir Território ------------------------------")
+                territories = facade.list_territories()
+                print("Territórios cadastrados: ")
+                for territory in territories:
+                    print(f"ID: {territory[0]}, Nome: {territory[1]}, X: {territory[2]}, Y: {territory[3]}")
+                id_delete = int(input("ID que você deseja excluir: "))
+                facade.delete_territory(id_delete)
+                print(colored("Território excluido com sucesso!", "green"))
+                time.sleep(1.5) 
             elif user_input == 4:
+                admin_menu(facade)
+            elif user_input == 5:
                 print("Encerrando o programa...")
                 exit() 
 
@@ -138,8 +151,9 @@ def admin_menu(facade):
                 print(f"ID: {users[0]}, Nome: {users[1]}, E-mail: {users[2]}, Celular: {users[4]}")
 
             print("\n1 - Criar Usuário")
-            print("2 - Voltar ao Menu Admin")
-            print("2 - Encerrar Programa")
+            print("2 - Excluir Usuário")
+            print("3 - Voltar ao Menu Admin")
+            print("4 - Encerrar Programa")
 
             try:
                 user_input = int(input("Escolha sua opção: "))
@@ -155,22 +169,35 @@ def admin_menu(facade):
               user_celphone = input("Celular do usuário: ")
               territory_id = int(input("ID do território: "))
               facade.create_user(user_name, user_password, user_email, user_celphone, territory_id)
-              print(f"Usuário adicionado com sucesso!")
+              print(colored("Usuário adicionado com sucesso!", "green"))
+              time.sleep(1.5)
             elif user_input == 2:
-              admin_menu(facade)
+                clear_screen()
+                print(f"------------------------------ Excluir Usuário ------------------------------")
+                users = facade.list_users()
+                print("Usuários cadastrados: ")
+                for users in users:
+                    print(f"ID: {users[0]}, Nome: {users[1]}, E-mail: {users[2]}, Celular: {users[4]}")
+                id_delete = int(input("\nID que você deseja excluir: "))
+                facade.delete_user(id_delete)
+                print(colored("Usuário excluido com sucesso!", "green"))
+                time.sleep(1.5)       
             elif user_input == 3:
+              admin_menu(facade)
+            elif user_input == 4:
                   print("Encerrando o programa...")
                   exit() 
         elif admin_input == 3:
             clear_screen()
             print(f"------------------------------ Animais ------------------------------")
-            animais = facade.list_animais()
+            animals = facade.list_animais()
             print("Animais cadastrados: ")
-            for animais in animais:
-                print(f"ID: {animais[0]}, Nome: {animais[1]}, Espécie: {animais[2]}, Idade: {animais[3]}, Descrição: {animais[4]}, ID território: {animais[5]},ID rastreador: {animais[6]}")
+            for animal in animals:
+                print(f"ID: {animal[0]}, Nome: {animal[1]}, Espécie: {animal[2]}, Idade: {animal[3]}, Descrição: {animal[4]}, ID território: {animal[5]},ID rastreador: {animal[6]}")
             print("\n1 - Criar Animal")
-            print("2 - Voltar ao Menu Admin")
-            print("3 - Encerrar Programa")
+            print("2 - Excluir Animal")
+            print("3 - Voltar ao Menu Admin")
+            print("4 - Encerrar Programa")
 
             try:
                 user_input = int(input("Escolha sua opção: "))
@@ -186,10 +213,23 @@ def admin_menu(facade):
               animal_age = int(input("Idade do animal: "))
               territory_id = int(input("ID do território: "))
               facade.add_animal_to_territory(animal_name, animal_specie, animal_age, territory_id)
-              print(f"Animal adicionado com sucesso!")
+              print(colored("Animal adicionado com sucesso!", "green"))
+              time.sleep(1.5)
+              
             elif user_input == 2:
-                admin_menu(facade)
+                clear_screen()
+                print(f"------------------------------ Excluir Animal ------------------------------")
+                animals = facade.list_animais()
+                print("Usuários cadastrados: ")
+                for animal in animals:
+                     print(f"ID: {animal[0]}, Nome: {animal[1]}, Espécie: {animal[2]}, Idade: {animal[3]}, Descrição: {animal[4]}, ID território: {animal[5]},ID rastreador: {animal[6]}")
+                id_delete = int(input("\nID que você deseja excluir: "))
+                facade.delete_animal(id_delete)
+                print(colored("Animal excluido com sucesso!", "green"))
+                time.sleep(1.5)    
             elif user_input == 3:
+                admin_menu(facade)
+            elif user_input == 4:
                 exit()
         elif admin_input == 4:
           home_screen()

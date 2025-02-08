@@ -41,7 +41,25 @@ class SystemFacade:
         VALUES (?, ?, ?)
         ''', (name, x, y))
         self.conn.commit()
-
+    
+    def delete_user(self, id: int):
+        self.cursor.execute('''
+        DELETE FROM users WHERE id = ?                    
+        ''', (id,))
+        self.conn.commit()
+        
+    def delete_territory(self, id: int):
+        self.cursor.execute('''
+        DELETE FROM territories WHERE id = ?                    
+        ''', (id,))
+        self.conn.commit()
+        
+    def delete_animal(self, id: int):
+        self.cursor.execute('''
+        DELETE FROM animals WHERE id = ?                    
+        ''', (id,))
+        self.conn.commit()
+        
     def add_animal_to_territory(self, name: str, specie: str, age: int, territory_id: int, description="No Description"):
         self.cursor.execute('''
         INSERT INTO animals (name, specie, age, description, territory_id)
