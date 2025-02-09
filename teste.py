@@ -2,13 +2,11 @@
 from abc import ABC, abstractmethod
 import os
 import time
+import bcrypt
 import pwinput
 from termcolor import colored
 from patterns.facade import SystemFacade
-
-# Função para limpar a tela
-def clear_screen():
-    os.system("cls" if os.name == "nt" else "clear")
+from utils import clear_screen
 
 # Classe abstrata para os papéis dos usuários
 class UserRole(ABC):
@@ -22,7 +20,7 @@ class RegularUser(UserRole):
         while True:
             clear_screen()
             print("\n------------------------------ Menu do Usuário ------------------------------")
-            print("1 - Visualizar Territórios")
+            print("1 - Visualizar Território")
             print("2 - Voltar ao Menu Principal")
             print("3 - Encerrar Programa")
 
@@ -33,12 +31,31 @@ class RegularUser(UserRole):
                 continue
 
             if user_input == 1:
+                clear_screen()
+                print(f"------------------------------ Territórios ------------------------------")
                 territories = facade.list_territories()
-                print("\nTerritórios cadastrados:")
+                print("Territórios cadastrados: ")
                 for territory in territories:
                     print(f"ID: {territory[0]}, Nome: {territory[1]}, X: {territory[2]}, Y: {territory[3]}")
-                input("\nPressione Enter para continuar...")
+                    #print(facade.show_territory(territory))
+                    try:
+                        territory_id = int(input("Digite o ID do território que deseja visualizar: "))
 
+                        territory = None
+                        for t in territories:
+                            if t[0] == territory_id:  
+                                territory = t
+                                break
+                        if territory:
+                            print(f"Visualizando território ID {territory[0]} - {territory[1]}")
+                            #print(territory)
+                            #print(facade.show_territory(territory[2], territory[3]))
+                            facade.show_territory(territory[2], territory[3])
+                            time.sleep(10)
+                        else:
+                            print(colored("Território não encontrado!", "red"))
+                    except ValueError:
+                        print("ID inválido! Digite um número.")  
             elif user_input == 2:
                 return  # Volta ao menu principal
 
@@ -82,7 +99,7 @@ class AdminUser(UserRole):
         while True:
             clear_screen()
             print("\n------------------------------ Gerenciar Territórios ------------------------------")
-            print("1 - Listar Territórios")
+            print("1 - Vizualizar Territórios")
             print("2 - Criar Território")
             print("3 - Deletar Território")
             print("4 - Voltar ao Menu Admin")
@@ -94,14 +111,36 @@ class AdminUser(UserRole):
                 continue
 
             if user_input == 1:
+                clear_screen()
+                print(f"------------------------------ Territórios ------------------------------")
                 territories = facade.list_territories()
-                print("\nTerritórios cadastrados:")
+                print("Territórios cadastrados: ")
                 for territory in territories:
                     print(f"ID: {territory[0]}, Nome: {territory[1]}, X: {territory[2]}, Y: {territory[3]}")
-                input("\nPressione Enter para continuar...")
+                    #print(facade.show_territory(territory))
+                    try:
+                        territory_id = int(input("Digite o ID do território que deseja visualizar: "))
+
+                        territory = None
+                        for t in territories:
+                            if t[0] == territory_id:  
+                                territory = t
+                                break
+                        if territory:
+                            print(f"Visualizando território ID {territory[0]} - {territory[1]}")
+                            #print(territory)
+                            #print(facade.show_territory(territory[2], territory[3]))
+                            facade.show_territory(territory[2], territory[3])
+                            time.sleep(10)
+                        else:
+                            print(colored("Território não encontrado!", "red"))
+                    except ValueError:
+                        print("ID inválido! Digite um número.")  
 
             elif user_input == 2:
-                name = input("Nome do território: ")
+                clear_screen()
+                print(f"------------------------------ Novo Território ------------------------------")
+                name = input("\nNome do território: ")
                 x = int(input("Coordenada X: "))
                 y = int(input("Coordenada Y: "))
                 facade.create_territory(name, x, y)
@@ -109,7 +148,13 @@ class AdminUser(UserRole):
                 time.sleep(1.5)
 
             elif user_input == 3:
-                id_delete = int(input("ID do território para deletar: "))
+                clear_screen()
+                print(f"------------------------------ Excluir Território ------------------------------")
+                territories = facade.list_territories()
+                print("Territórios cadastrados: ")
+                for territory in territories:
+                    print(f"ID: {territory[0]}, Nome: {territory[1]}, X: {territory[2]}, Y: {territory[3]}")
+                id_delete = int(input("\nID do território para deletar: "))
                 facade.delete_territory(id_delete)
                 print(colored("Território excluído com sucesso!", "green"))
                 time.sleep(1.5)
@@ -140,7 +185,9 @@ class AdminUser(UserRole):
                 input("\nPressione Enter para continuar...")
 
             elif user_input == 2:
-                name = input("Nome: ")
+                clear_screen()
+                print(f"------------------------------ Novo Usuário ------------------------------")
+                name = input("\nNome: ")
                 password = input("Senha: ")
                 email = input("E-mail: ")
                 phone = input("Celular: ")
@@ -150,7 +197,13 @@ class AdminUser(UserRole):
                 time.sleep(1.5)
 
             elif user_input == 3:
-                id_delete = int(input("ID do usuário para excluir: "))
+                clear_screen()
+                print(f"------------------------------ Excluir Usuário ------------------------------")
+                users = facade.list_users()
+                print("Usuários cadastrados: ")
+                for users in users:
+                    print(f"ID: {users[0]}, Nome: {users[1]}, E-mail: {users[2]}, Celular: {users[4]}")
+                id_delete = int(input("\nID do usuário para excluir: "))
                 facade.delete_user(id_delete)
                 print(colored("Usuário excluído com sucesso!", "green"))
                 time.sleep(1.5)
@@ -181,7 +234,9 @@ class AdminUser(UserRole):
                 input("\nPressione Enter para continuar...")
 
             elif user_input == 2:
-                name = input("Nome: ")
+                clear_screen()
+                print(f"------------------------------ Novo Animal ------------------------------")
+                name = input("\nNome: ")
                 specie = input("Espécie: ")
                 age = int(input("Idade: "))
                 territory_id = int(input("ID do território: "))
@@ -190,7 +245,13 @@ class AdminUser(UserRole):
                 time.sleep(1.5)
 
             elif user_input == 3:
-                id_delete = int(input("ID do animal para excluir: "))
+                clear_screen()
+                print(f"------------------------------ Excluir Animal ------------------------------")
+                animals = facade.list_animais()
+                print("Usuários cadastrados: ")
+                for animal in animals:
+                     print(f"ID: {animal[0]}, Nome: {animal[1]}, Espécie: {animal[2]}, Idade: {animal[3]}, Descrição: {animal[4]}, ID território: {animal[5]},ID rastreador: {animal[6]}")
+                id_delete = int(input("\nID do animal para excluir: "))
                 facade.delete_animal(id_delete)
                 print(colored("Animal excluído com sucesso!", "green"))
                 time.sleep(1.5)
@@ -211,10 +272,11 @@ def login_screen(facade):
 
         if admin and admin[3] == senha:
             role = AdminUser()
-        elif user and user[3] == senha:
+        elif user and bcrypt.checkpw(senha.encode(), user[3]):
             role = RegularUser()
         else:
             print("Login ou senha inválidos, tente novamente.")
+            time.sleep(1.5)
             continue
 
         role.show_menu(facade)

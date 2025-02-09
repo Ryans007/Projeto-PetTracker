@@ -20,6 +20,20 @@ Tarefas a fazer:
 19 - Adicionar lógica da criação do usuário ✅
 20 - No momento da criação do usuário, exibir os territórios que ainda estão sem dono
 21 - Implementar uma logica para colocar descrição no animal - Fácil 
+--------------------------------------------------- Padrões Implementados------------------------------------------------------------
+22 - Padrão Facade ✅
+23 - Padrão Strategy ✅
+  Explicação: 
+    Strategy (Estratégia)
+    Onde é aplicado: Nas classes UserRole, RegularUser e AdminUser.
+
+    Objetivo: Permitir que o comportamento do sistema varie dinamicamente conforme o papel do usuário (admin ou comum).
+
+    Funcionamento:
+
+    A classe abstrata UserRole define o método show_menu(), que é implementado de forma diferente em RegularUser (menu limitado) e AdminUser (menu completo).
+
+    Durante o login, o tipo de usuário determina qual estratégia (AdminUser ou RegularUser) será usada. O método show_menu() é executado polimorficamente, adaptando o menu conforme o papel.
 
 
 Tarefas feitas:

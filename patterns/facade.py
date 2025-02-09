@@ -97,7 +97,7 @@ class SystemFacade:
     def get_admin_by_email(self, email: str):
         self.cursor.execute("SELECT * FROM admins WHERE email = ?", (email,))
         return self.cursor.fetchone()
-    def get_user_by_email(self, email):
+    def get_user_by_email(self, email: str):
         self.cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
         return self.cursor.fetchone()
     
