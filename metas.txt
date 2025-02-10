@@ -12,8 +12,8 @@ Tarefas a fazer:
 11 - Adicionar a tabela de usuário ao banco de dados ✅
 12 - Implementar o registro e consultas de ocorrências
 13 - Implementar a remoção de animal/usuário ✅
-14 - Implementar o login do usuário - Facil
-15 - Implementar o menu do usuário - Facil
+14 - Implementar o login do usuário - Facil ✅
+15 - Implementar o menu do usuário - Facil ✅
 16 - Revisar o código das classes
 17 - Implementar os padrões que faltam (observer, Factory, composite, proxy, singleton)
 18 - Implementar (Inserir Dados do Dispositivo de Rastreamento)
