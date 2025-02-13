@@ -3,16 +3,13 @@ import time
 import random
 
 class Territory():
-    def __init__(self, name: str, x: int, y: int, owner = None, id: int | None = None) -> None:
+    def __init__(self, name: str, x: int, y: int, owner = None | str, id: int | None = None) -> None:
         self.id = id
         self.name = name
         self.x = x
         self.y = y
         self.owner = owner
         self.animals = []
-
-    def add_owner(self, owner) -> None:
-        self.owner = owner
 
     def add_animal(self, animal) -> None:
         self.animals.append(animal)

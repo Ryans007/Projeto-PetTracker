@@ -40,7 +40,7 @@ def database_init():
             x INTEGER NOT NULL,
             y INTEGER NOT NULL,
                        
-            owner_id INTEGER
+            owner TEXT
         )
         ''')
 

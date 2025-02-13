@@ -179,7 +179,7 @@ class AdminUser(UserRole):
                 users = facade.list_users()
                 print("\nUsuários cadastrados:")
                 for user in users:
-                    print(f"ID: {user[0]}, Nome: {user[1]}, E-mail: {user[2]}, Celular: {user[4]}")
+                    print(f"ID: {user._Person__id}, Nome: {user.name}, E-mail: {user.email}, Celular: {user.celphone}")
                 input("\nPressione Enter para continuar...")
 
             elif user_input == 2:
@@ -199,8 +199,8 @@ class AdminUser(UserRole):
                 print(f"------------------------------ Excluir Usuário ------------------------------")
                 users = facade.list_users()
                 print("Usuários cadastrados: ")
-                for users in users:
-                    print(f"ID: {users[0]}, Nome: {users[1]}, E-mail: {users[2]}, Celular: {users[4]}")
+                for user in users:
+                    print(f"ID: {user._Person__id}, Nome: {user.name}, E-mail: {user.email}, Celular: {user.celphone}")
                 id_delete = int(input("\nID do usuário para excluir: "))
                 facade.delete_user(id_delete)
                 print(colored("Usuário excluído com sucesso!", "green"))
