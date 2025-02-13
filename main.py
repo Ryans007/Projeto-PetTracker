@@ -6,6 +6,7 @@ import pwinput
 from termcolor import colored
 from patterns.facade import SystemFacade
 from utils import clear_screen
+from _class.person import Admin
 
 # Classe abstrata para os papéis dos usuários
 class UserRole(ABC):
@@ -268,7 +269,8 @@ def login_screen(facade):
         admin = facade.get_admin_by_email(email)
         user = facade.get_user_by_email(email)
 
-        if admin and admin[3] == senha:
+        if admin and bcrypt.checkpw(senha.encode(), admin[3]):
+            facade.admin = Admin(admin[1], admin[2], admin[3], admin[4])
             role = AdminUser()
         elif user and bcrypt.checkpw(senha.encode(), user[3]):
             role = RegularUser()
@@ -283,4 +285,5 @@ def login_screen(facade):
 # Inicialização
 if __name__ == "__main__":
     facade = SystemFacade()
+    #facade.create_admin("ryan", "ryan@gmail.com", "1234", "9387-5652")
     login_screen(facade)

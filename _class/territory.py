@@ -91,6 +91,7 @@ class Territory():
         row = cursor.fetchone()
         if row:
             return Territory(id=row[0], name=row[1], x=row[2], y=row[3])
+        raise Exception("Nenhum territorio corresponde ao id")
         
     def delete(self, conn):
         if self.id is not None:

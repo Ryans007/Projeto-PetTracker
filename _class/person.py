@@ -9,10 +9,7 @@ from utils import hash_password
 
 class Person(metaclass=ABCMeta):
   def __init__(self, name: str, email: str, password: str, celphone: str, id: None | int = None) -> None:
-    if id is None:
-      self.__id = random.randint(0, 500)
-    else:
-      self.__id = id
+    self.__id = id
     self.__name = name
     self.__email = email
     self.__password = password
@@ -97,7 +94,7 @@ class User(Person):
                       SET name = ?, password = ?, email = ?, celphone = ?, territory_id = ?
                       WHERE id = ?
                       ''', 
-                      (self.name, hashed_password, self.email, self.celphone, self.territory_id))
+                      (self.name, hashed_password, self.email, self.celphone, self.territory.id))
       conn.commit()
     finally:
       cursor.close()

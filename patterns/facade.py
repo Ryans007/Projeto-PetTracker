@@ -17,6 +17,9 @@ class SystemFacade:
         self.cursor = self.conn.cursor()
         self.admin = None
         
+    def get_territory_by_id(self, id: int):
+        return Territory.get_by_id(self.conn, id)    
+    
     def create_admin(self, name: str, email: str, password: str,celphone: str):
         try:
             self.admin=Admin(name=name, email=email, password=password, celphone=celphone)
@@ -27,10 +30,10 @@ class SystemFacade:
             print(f"Erro ao criar admin: {e}")
             return None
 
-    def create_user(self, name: str, password: str, email: str, celphone: str, territory: Territory) -> User | None:
+    def create_user(self, name: str, password: str, email: str, celphone: str, territory_id) -> User | None:
         try:
             if self.admin is not None:
-                user = self.admin.add_user(name, password, email, celphone, territory)
+                user = self.admin.add_user(name, password, email, celphone, self.get_territory_by_id(territory_id))
                 user.save(self.conn)
                 return user
         except sqlite3.Error as e:
@@ -68,9 +71,6 @@ class SystemFacade:
             self.conn.rollback()
             print(f"Erro ao criar território: {e}")
             return None
-        
-    def get_territory_by_id(self, id: int):
-        return Territory.get_by_id(self.conn, id)
     
     def update_territory(self, id: int, name: str, x: int, y: int):
         territory = self.get_territory_by_id(id)
