@@ -15,14 +15,10 @@ class Tracker():
     self.last_update = None
     self.location = Location()
   
-  def location_generate(self) -> Tuple[int, int]:
+  def location_generate(self) -> None:
     while True:
-      x = random.randint(0, 500)
-      y = random.randint(0,500)
-      
-      time.sleep(30)
-      self.last_update = datetime.now()
-      
-      self.location.update_coordinated((x,y))
+      time.sleep(2)
+      print(self.location.generate_coordenate())
 
+  
 

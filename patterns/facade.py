@@ -1,3 +1,4 @@
+from _class import territory
 from _class.territory import Territory
 from _class.animal import Animal
 from _class.tracker import Tracker
@@ -13,7 +14,7 @@ class SystemFacade:
         database_init()
         self.conn = sqlite3.connect('pettracker.db')
         self.cursor = self.conn.cursor()
-
+        
     def create_admin(self, name: str, email: str, password: str,celphone: str):
         
         admin = Admin(name, email, password, celphone)
@@ -35,22 +36,42 @@ class SystemFacade:
         ''', (name, hashed_password, email, celphone, territory_id))
         self.conn.commit()
 
-    def create_territory(self, name: str, x: int, y: int):
-        self.cursor.execute('''
-        INSERT INTO territories (name, x, y)
-        VALUES (?, ?, ?)
-        ''', (name, x, y))
-        self.conn.commit()
+    def create_territory(self, name: str, x: int, y: int) -> Territory | None:
+        try:
+            territory = Territory(name=name, x=x, y=y)
+            territory.save(self.conn)
+            return territory
+            # self.cursor.execute('''
+            # INSERT INTO territories (name, x, y)
+            # VALUES (?, ?, ?)
+            # ''', (name, x, y))
+            # self.conn.commit()
+        except sqlite3.Error as e:
+            self.conn.rollback()
+            print(f"Erro ao criar território: {e}")
+            return None
+        
+    def get_territory_by_id(self, id: int):
+        return Territory.get_by_id(self.conn, id)
+    
+    def update_territory(self, id: int, name: str, x: int, y: int):
+        territory = self.get_territory_by_id(id)
+        if territory:
+            if name:
+                territory.name = name
+            if x:
+                territory.x = x
+            if y:
+                territory.y = y
+            territory.save(self.conn)
+    def delete_territory(self, id: int):
+        territory = self.get_territory_by_id(id)
+        if territory:
+            territory.delete(self.conn)
     
     def delete_user(self, id: int):
         self.cursor.execute('''
         DELETE FROM users WHERE id = ?                    
-        ''', (id,))
-        self.conn.commit()
-        
-    def delete_territory(self, id: int):
-        self.cursor.execute('''
-        DELETE FROM territories WHERE id = ?                    
         ''', (id,))
         self.conn.commit()
         
@@ -77,7 +98,8 @@ class SystemFacade:
 
     def list_territories(self):
         self.cursor.execute('SELECT * FROM territories')
-        return self.cursor.fetchall()
+        rows = self.cursor.fetchall()
+        return [Territory(id=row[0], name=row[1], x=row[2], y=row[3]) for row in rows]
     
     def list_animais(self):
         self.cursor.execute('SELECT * From animals')
@@ -101,6 +123,3 @@ class SystemFacade:
         self.cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
         return self.cursor.fetchone()
     
-    def get_territory_by_id(self, id: int):
-        self.cursor.execute("SELECT * FROM territories WHERE id = ?", (id,))
-        return self.cursor.fetchone()

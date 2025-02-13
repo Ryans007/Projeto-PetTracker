@@ -1,12 +1,16 @@
+from _class.tracker import Tracker
+from _class.territory import Territory
+import threading
+import time
 
 class Animal():
-  def __init__(self, name: str, id: int, specie: str, age: int, tracker, territory, description: str = "No Description") -> None:
+  def __init__(self, name: str, id: int, specie: str, age: int, description: str = "No Description") -> None:
     self.__name = name
     self.__specie = specie
     self.__age = age
     self.__description = description
     self.territory = territory
-    self.tracker = tracker
+    self.tracker = Tracker(True)
     self.__id = id
 
   @property
@@ -51,5 +55,13 @@ class Animal():
   
     
 
+if __name__ == "__main__":
+  territory = Territory("IFPB", 50, 60)
+  animal = Animal("Rogerio", 1, "Cachorro", 12)
+  territory.add_animal(animal)
   
+  animal_thread = threading.Thread(target=animal.tracker.location_generate, daemon=True)
+  animal_thread.start()
   
+  print(territory.show_territory(13,13))
+  # O restante do programa continua executando normalmente

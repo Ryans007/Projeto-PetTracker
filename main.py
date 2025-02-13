@@ -115,26 +115,25 @@ class AdminUser(UserRole):
                 territories = facade.list_territories()
                 print("Territórios cadastrados: ")
                 for territory in territories:
-                    print(f"ID: {territory[0]}, Nome: {territory[1]}, X: {territory[2]}, Y: {territory[3]}")
-                    #print(facade.show_territory(territory))
-                    try:
-                        territory_id = int(input("Digite o ID do território que deseja visualizar: "))
+                    print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
+                try:
+                    territory_id = int(input("Digite o ID do território que deseja visualizar: "))
 
-                        territory = None
-                        for t in territories:
-                            if t[0] == territory_id:  
-                                territory = t
-                                break
-                        if territory:
-                            print(f"Visualizando território ID {territory[0]} - {territory[1]}")
-                            #print(territory)
-                            #print(facade.show_territory(territory[2], territory[3]))
-                            facade.show_territory(territory[2], territory[3])
-                            time.sleep(10)
-                        else:
-                            print(colored("Território não encontrado!", "red"))
-                    except ValueError:
-                        print("ID inválido! Digite um número.")  
+                    territory = None
+                    for t in territories:
+                        if t[0] == territory_id:  
+                            territory = t
+                            break
+                    if territory:
+                        print(f"Visualizando território ID {territory[0]} - {territory[1]}")
+                        #print(territory)
+                        #print(facade.show_territory(territory[2], territory[3]))
+                        facade.show_territory(territory[2], territory[3])
+                        time.sleep(10)
+                    else:
+                        print(colored("Território não encontrado!", "red"))
+                except ValueError:
+                    print("ID inválido! Digite um número.")  
 
             elif user_input == 2:
                 clear_screen()
@@ -152,7 +151,7 @@ class AdminUser(UserRole):
                 territories = facade.list_territories()
                 print("Territórios cadastrados: ")
                 for territory in territories:
-                    print(f"ID: {territory[0]}, Nome: {territory[1]}, X: {territory[2]}, Y: {territory[3]}")
+                    print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
                 id_delete = int(input("\nID do território para deletar: "))
                 facade.delete_territory(id_delete)
                 print(colored("Território excluído com sucesso!", "green"))
