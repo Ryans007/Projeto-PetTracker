@@ -46,22 +46,23 @@ class Animal():
     self.__description = description
   
   def save(self, conn):
-    cursor = conn.cursor()
-    try:
-        if self.__id is None:
-          cursor.execute('''
-                         INSERT INTO animals (name, specie, age, description, territory_id)
-                         VALUES(?, ?, ?, ?, ?)
-                         ''', (self.name, self.specie, self.age, self.territory.id, self.description))
-          self.id = cursor.lastrowid
-        else:
-          cursor.execute('''
-                         UPDATE animals
-                         SET name = ?, specie = ?, age = ?, description = ?, territory_id = ?
-                         ''', (self.name, self.specie, self.age, self.territory.id, self.description))
-        conn.commit()    
-    finally:
-      cursor.close()
+      cursor = conn.cursor()
+      try:
+          if self.__id is None:
+              cursor.execute('''
+                          INSERT INTO animals (name, specie, age, description, territory_id)
+                          VALUES(?, ?, ?, ?, ?)
+                          ''', (self.name, self.specie, self.age, self.description, self.territory.id))
+              self.id = cursor.lastrowid
+          else:
+              cursor.execute('''
+                          UPDATE animals
+                          SET name = ?, specie = ?, age = ?, description = ?, territory_id = ?
+                          WHERE id = ?
+                          ''', (self.name, self.specie, self.age, self.description, self.territory.id, self.id))
+          conn.commit()    
+      finally:
+          cursor.close()
       
   @staticmethod
   def get_by_id(conn, id: int):

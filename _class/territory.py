@@ -14,10 +14,9 @@ class Territory():
     def add_animal(self, animal) -> None:
         self.animals.append(animal)
 
-    @staticmethod
-    def show_territory(height: int, width: int):
+    def show_territory(self, height: int, width: int):
         def func_to_show(stdscr):
-            try:
+            #try:
                 curses.curs_set(0)
                 stdscr.nodelay(1)
                 stdscr.timeout(100)
@@ -35,7 +34,7 @@ class Territory():
                             if i == 0 or i == territory_height - 1 or j == 0 or j == territory_width - 1:
                                 stdscr.addch(i, j, '#')
                             elif i == y and j == x:
-                                stdscr.addch(i, j, "*")
+                                stdscr.addstr(i, j, self.animals[0].name)
                     
                     inside_territory = (0 <= x < territory_width and 0 <= y < territory_height)
                     
@@ -61,8 +60,8 @@ class Territory():
                     key = stdscr.getch()
                     if key == ord('q'):
                         break
-            except Exception:
-                print("Tamanho do territorio maior que o terminal")
+            #except Exception:
+                #print("Tamanho do territorio maior que o terminal")
 
         curses.wrapper(func_to_show)
 

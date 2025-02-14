@@ -125,14 +125,25 @@ class SystemFacade:
 
     def list_animals_in_territory(self, territory_id: int):
         self.cursor.execute('SELECT * FROM animals WHERE territory_id = ?', (territory_id,))
-        return self.cursor.fetchall()
+        rows = self.cursor.fetchall()
+        animals = []
+        for row in rows:
+            territory = self.get_territory_by_id(row[5])  # Supondo que territory_id está na posição 5
+            animal = Animal(id=row[0], name=row[1], specie=row[2], age=row[3], territory=territory, description=row[4])
+            animals.append(animal)
+        return animals
 
     def close_connection(self):
         self.conn.close()
 
-    @staticmethod
-    def show_territory(largura: int, altura: int):
-        Territory.show_territory(largura, altura)        
+    def show_territory(self, territory_id: int):
+        territory = self.get_territory_by_id(territory_id)
+        if territory:
+            # Buscar animais associados ao território
+            animals = self.list_animals_in_territory(territory_id)
+            # Limpar animais existentes e adicionar os novos
+            territory.animals = animals
+            territory.show_territory(territory.x, territory.y)   
 
     def get_admin_by_email(self, email: str):
         self.cursor.execute("SELECT * FROM admins WHERE email = ?", (email,))

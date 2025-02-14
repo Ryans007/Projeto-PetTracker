@@ -119,20 +119,8 @@ class AdminUser(UserRole):
                     print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
                 try:
                     territory_id = int(input("Digite o ID do território que deseja visualizar: "))
-
-                    territory = None
-                    for t in territories:
-                        if t[0] == territory_id:  
-                            territory = t
-                            break
-                    if territory:
-                        print(f"Visualizando território ID {territory[0]} - {territory[1]}")
-                        #print(territory)
-                        #print(facade.show_territory(territory[2], territory[3]))
-                        facade.show_territory(territory[2], territory[3])
-                        time.sleep(10)
-                    else:
-                        print(colored("Território não encontrado!", "red"))
+                    facade.show_territory(territory_id)
+                    time.sleep(10)
                 except ValueError:
                     print("ID inválido! Digite um número.")  
 
