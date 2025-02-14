@@ -18,7 +18,10 @@ class SystemFacade:
         self.admin = None
         
     def get_territory_by_id(self, id: int):
-        return Territory.get_by_id(self.conn, id)    
+        return Territory.get_by_id(self.conn, id)
+ 
+    def get_user_by_id(self, id: int):
+        return User.get_by_id(self.conn, id)        
     
     def create_admin(self, name: str, email: str, password: str,celphone: str):
         try:
@@ -53,9 +56,6 @@ class SystemFacade:
             if celphone:
                 user.celphone = celphone
             user.save(self.conn)
-        
-    def get_user_by_id(self, id: int):
-        return User.get_by_id(self.conn, id)
     
     def delete_user(self, id: int):
         user = self.get_user_by_id(id)
@@ -95,12 +95,16 @@ class SystemFacade:
         self.conn.commit()
         
     def add_animal_to_territory(self, name: str, specie: str, age: int, territory_id: int, description="No Description"):
-        self.cursor.execute('''
-        INSERT INTO animals (name, specie, age, description, territory_id)
-        VALUES (?, ?, ?, ?, ?)
-        ''', (name, specie, age, description, territory_id))
-        self.conn.commit()
-
+        try:
+            if self.admin is not None:
+                animal = self.admin.add_animal(name=name, specie=specie, age=age, territory=self.get_territory_by_id(territory_id), description=description)
+                animal.save(self.conn)
+                return animal      
+        except sqlite3.Error as e:
+            self.conn.rollback()
+            print(f"Erro ao criar usuário: {e}")
+            return None
+        
     def list_admins(self):
         self.cursor.execute('SELECT * FROM admins')
         return self.cursor.fetchall()

@@ -53,7 +53,6 @@ def database_init():
             age INTEGER NOT NULL,
             description TEXT,
             territory_id INTEGER,
-            tracker_id INTEGER
         )
         ''')
 

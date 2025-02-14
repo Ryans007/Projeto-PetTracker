@@ -4,7 +4,7 @@ import threading
 import time
 
 class Animal():
-  def __init__(self, name: str, id: int, specie: str, age: int, description: str = "No Description") -> None:
+  def __init__(self, name: str, specie: str, age: int, territory: Territory, description: str = "No Description", id: int | None = None) -> None:
     self.__name = name
     self.__specie = specie
     self.__age = age
@@ -44,24 +44,48 @@ class Animal():
   @description.setter
   def description(self, description) -> None:
     self.__description = description
+  
+  def save(self, conn):
+    cursor = conn.cursor()
+    try:
+        if self.__id is None:
+          cursor.execute('''
+                         INSERT INTO animals (name, specie, age, description, territory_id)
+                         VALUES(?, ?, ?, ?, ?)
+                         ''', (self.name, self.specie, self.age, self.territory.id, self.description))
+          self.id = cursor.lastrowid
+        else:
+          cursor.execute('''
+                         UPDATE animals
+                         SET name = ?, specie = ?, age = ?, description = ?, territory_id = ?
+                         ''', (self.name, self.specie, self.age, self.territory.id, self.description))
+        conn.commit()    
+    finally:
+      cursor.close()
+      
+  @staticmethod
+  def get_by_id(conn, id: int):
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM animals WHERE id = ?', (id,))
+    row = cursor.fetchone()
+    if row:
+      return Animal(id=row[0], name=row[1], specie=row[2], age=row[3], territory=row[4], description=row[5])
+    raise Exception("Nenhum animal corresponde ao id")
+   
+  def delete(self, conn):
+    if self.id is not None:
+      cursor = conn.cursor()
+      cursor.execute('DELETE FROM animals WHERE id = ?', (self.id,))
+      conn.commit()
+      self.id = None 
 
-  @property
-  def id(self) -> int:
-    return self.__id
+if __name__ == "__main__": pass
+  # territory = Territory("IFPB", 50, 60)
+  # animal = Animal("Rogerio", 1, "Cachorro", 12)
+  # territory.add_animal(animal)
   
-  @id.setter
-  def id(self, id) -> None:
-    self.__id = id
+  # animal_thread = threading.Thread(target=animal.tracker.location_generate, daemon=True)
+  # animal_thread.start()
   
-    
-
-if __name__ == "__main__":
-  territory = Territory("IFPB", 50, 60)
-  animal = Animal("Rogerio", 1, "Cachorro", 12)
-  territory.add_animal(animal)
-  
-  animal_thread = threading.Thread(target=animal.tracker.location_generate, daemon=True)
-  animal_thread.start()
-  
-  print(territory.show_territory(13,13))
+  # print(territory.show_territory(13,13))
   # O restante do programa continua executando normalmente

@@ -122,6 +122,7 @@ class Admin(Person):
     super().__init__(name, email, password, celphone, id)
     self.user_list = []
     self.territory_list = []
+    self.animal_list = []
     
   def add_territory(self, name: str, x: int, y: int, owner: str = None):
     owner = self.name
@@ -129,14 +130,19 @@ class Admin(Person):
     self.territory_list.append(territory)
     return territory
     
-  def add_animal(self, name: str, specie: str, age: int, tracker: Tracker, territory: Territory, description: str = "No Description") -> bool:
-    animal = Animal(name, specie, age, tracker, territory, description)
-    if animal:
-      territory.add_animal(animal)
-      print("Animal adicionado com sucesso!!!")
-      return True
-    print("Falha ao adicionar o animal!!!")
-    return False
+  def add_animal(self, name: str, specie: str, age: int, territory: Territory, description: str = "No Description") -> bool:
+    animal = Animal(name=name, specie=specie, age=age, territory=territory, description=description)
+    self.animal_list.append(animal)
+    territory.add_animal(animal)
+    return animal
+  
+  def add_territory(self , name: str, x: int, y: int, owner: str):
+      owner = self.name
+      territory = Territory(name, x, y, owner)
+      self.territory_list.append(territory)
+      for animal in self.animal_list:
+        territory.add_animal(animal)
+      return territory  
     
   def add_user(self, name: str, password: str, email: str, celphone: str, territory: Territory, id: None | int = None) -> User:
     user = User(name, password, email, celphone, territory, id)
