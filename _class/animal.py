@@ -11,11 +11,10 @@ class Animal():
     self.__age = age
     self.__description = description
     self.territory = territory
-    self.tracker = Tracker(True)
+    self.tracker = Tracker(True, territory.x, territory.y)
     self.__id = id
-    self.x = random.randint(1, territory.x - 2)  # Posição inicial aleatória
-    self.y = random.randint(1, territory.y - 2)
-
+    self.x, self.y = self.tracker.location_generate()
+    
   @property
   def name(self) -> str:
     return self.__name

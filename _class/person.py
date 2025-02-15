@@ -130,7 +130,7 @@ class Admin(Person):
     self.territory_list.append(territory)
     return territory
     
-  def add_animal(self, name: str, specie: str, age: int, territory: Territory, description: str = "No Description") -> bool:
+  def add_animal(self, name: str, specie: str, age: int, territory: Territory, description: str = "No Description"):
     animal = Animal(name=name, specie=specie, age=age, territory=territory, description=description)
     self.animal_list.append(animal)
     territory.add_animal(animal)
