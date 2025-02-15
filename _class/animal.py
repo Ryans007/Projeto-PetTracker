@@ -2,6 +2,7 @@ from _class.tracker import Tracker
 from _class.territory import Territory
 import threading
 import time
+import random
 
 class Animal():
   def __init__(self, name: str, specie: str, age: int, territory: Territory, description: str = "No Description", id: int | None = None) -> None:
@@ -12,6 +13,8 @@ class Animal():
     self.territory = territory
     self.tracker = Tracker(True)
     self.__id = id
+    self.x = random.randint(1, territory.x - 2)  # Posição inicial aleatória
+    self.y = random.randint(1, territory.y - 2)
 
   @property
   def name(self) -> str:

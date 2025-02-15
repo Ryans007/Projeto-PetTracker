@@ -16,52 +16,62 @@ class Territory():
 
     def show_territory(self, height: int, width: int):
         def func_to_show(stdscr):
-            #try:
-                curses.curs_set(0)
-                stdscr.nodelay(1)
-                stdscr.timeout(100)
+            curses.curs_set(0)
+            stdscr.nodelay(1)
+            stdscr.timeout(100)
+            
+            territory_height = height
+            territory_width = width
+            status_line = territory_height + 1  # Linha para mensagens
+            
+            # Inicializa posições dos animais
+            for animal in self.animals:
+                animal.x = random.randint(1, territory_width - 2)
+                animal.y = random.randint(1, territory_height - 2)
+            
+            while True:
+                stdscr.clear()
+                escaped_animals = []  # Lista de animais que escaparam
                 
-                territory_height = height
-                territory_width = width
+                # Desenha bordas do território
+                for i in range(territory_height):
+                    for j in range(territory_width):
+                        if i == 0 or i == territory_height - 1 or j == 0 or j == territory_width - 1:
+                            stdscr.addch(i, j, '#')
                 
-                x, y = territory_width // 2, territory_height // 2
-                
-                while True:
-                    stdscr.clear()
+                # Desenha animais e verifica se escaparam
+                for animal in self.animals:
+                    # Verifica se está dentro do território
+                    inside = (1 <= animal.x < territory_width-1) and (1 <= animal.y < territory_height-1)
                     
-                    for i in range(territory_height):
-                        for j in range(territory_width):
-                            if i == 0 or i == territory_height - 1 or j == 0 or j == territory_width - 1:
-                                stdscr.addch(i, j, '#')
-                            elif i == y and j == x:
-                                stdscr.addstr(i, j, self.animals[0].name)
-                    
-                    inside_territory = (0 <= x < territory_width and 0 <= y < territory_height)
-                    
-                    if not inside_territory:
-                        stdscr.addstr(territory_height + 1, 0, "O cachorro saiu do territorio!!!")
+                    if inside:
+                        stdscr.addstr(animal.y, animal.x, animal.name[0])
                     else:
-                        stdscr.addstr(territory_height + 1, 0, " " * 30)
-                    
-                    stdscr.refresh()
-                    
+                        escaped_animals.append(animal)
+                
+                # Exibe mensagem de animais que escaparam
+                if escaped_animals:
+                    message = "Animais fora do território: "
+                    message += ", ".join([f"{animal.name} ({animal.specie})" for animal in escaped_animals])
+                    stdscr.addstr(status_line, 0, message.ljust(territory_width))
+                else:
+                    stdscr.addstr(status_line, 0, " " * territory_width)  # Limpa linha de status
+                
+                # Movimenta cada animal individualmente
+                for animal in self.animals:
                     direction = random.choice(['up', 'down', 'left', 'right'])
-                    if direction == 'up':
-                        y -= 1
-                    elif direction == 'down':
-                        y += 1
-                    elif direction == 'left':
-                        x -= 1
-                    elif direction == 'right':
-                        x += 1
                     
-                    time.sleep(0.2)
-                    
-                    key = stdscr.getch()
-                    if key == ord('q'):
-                        break
-            #except Exception:
-                #print("Tamanho do territorio maior que o terminal")
+                    if direction == 'up': animal.y -= 1
+                    elif direction == 'down': animal.y += 1
+                    elif direction == 'left': animal.x -= 1
+                    elif direction == 'right': animal.x += 1
+                
+                stdscr.refresh()
+                time.sleep(0.2)
+                
+                key = stdscr.getch()
+                if key == ord('q'):
+                    break
 
         curses.wrapper(func_to_show)
 
