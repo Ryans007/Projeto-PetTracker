@@ -8,7 +8,7 @@ from database.database import database_init
 class SystemFacade:
     def __init__(self):        
         database_init()
-        self.conn = sqlite3.connect('pettracker.db')
+        self.conn = sqlite3.connect('pettracker.db', check_same_thread=False)
         self.cursor = self.conn.cursor()
         self.admin = None
         
@@ -131,14 +131,14 @@ class SystemFacade:
     def close_connection(self):
         self.conn.close()
 
-    def show_territory(self, territory_id: int):
+    def show_territory(self, territory_id: int, stop_event):
         territory = self.get_territory_by_id(territory_id)
         if territory:
             # Buscar animais associados ao território
             animals = self.list_animals_in_territory(territory_id)
             # Limpar animais existentes e adicionar os novos
             territory.animals = animals
-            territory.show_territory()   
+            territory.show_territory(stop_event)   
 
     def get_admin_by_email(self, email: str):
         self.cursor.execute("SELECT * FROM admins WHERE email = ?", (email,))

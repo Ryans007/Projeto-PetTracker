@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
 #import os
 import time
+from xml.dom.expatbuilder import theDOMImplementation
 import bcrypt
 import pwinput
 from termcolor import colored
 from patterns.facade import SystemFacade
 from utils import clear_screen
 from _class.person import Admin
+import threading
 
 # Classe abstrata para os papéis dos usuários
 class UserRole(ABC):
@@ -39,8 +41,16 @@ class RegularUser(UserRole):
                     print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
                 try:
                     territory_id = int(input("Digite o ID do território que deseja visualizar: "))
-                    facade.show_territory(territory_id)
-                    time.sleep(10)
+                    # Cria o evento de parada e inicia a thread da simulação
+                    stop_event = threading.Event()
+                    sim_thread = threading.Thread(target=lambda: facade.show_territory(territory_id, stop_event))
+                    sim_thread.start()
+                    print("\nA simulação do território foi iniciada em uma nova janela.")
+                    print("Para voltar ao menu, volte ao terminal do menu e pressione Enter.")
+                    input() # Aguarda o usuário pressionar Enter no terminal principal
+                    # Sinaliza para a simulação encerrar e aguarda a thread terminar
+                    stop_event.set()
+                    sim_thread.join()
                 except ValueError:
                     print("ID inválido! Digite um número.")  
 
@@ -106,8 +116,16 @@ class AdminUser(UserRole):
                     print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
                 try:
                     territory_id = int(input("Digite o ID do território que deseja visualizar: "))
-                    facade.show_territory(territory_id)
-                    time.sleep(10)
+                    # Cria o evento de parada e inicia a thread da simulação
+                    stop_event = threading.Event()
+                    sim_thread = threading.Thread(target=lambda: facade.show_territory(territory_id, stop_event))
+                    sim_thread.start()
+                    print("\nA simulação do território foi iniciada em uma nova janela.")
+                    print("Para voltar ao menu, volte ao terminal do menu e pressione Enter.")
+                    input() # Aguarda o usuário pressionar Enter no terminal principal
+                    # Sinaliza para a simulação encerrar e aguarda a thread terminar
+                    stop_event.set()
+                    sim_thread.join()
                 except ValueError:
                     print("ID inválido! Digite um número.")  
 

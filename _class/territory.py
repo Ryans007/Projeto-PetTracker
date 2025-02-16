@@ -15,7 +15,7 @@ class Territory():
     def add_animal(self, animal) -> None:
         self.animals.append(animal)
 
-    def show_territory(self):
+    def show_territory(self, stop_event):
          # Dimensões do território e da área de mensagem
         territory_width = self.x
         territory_height = self.y        # área onde o território é desenhado
@@ -27,7 +27,7 @@ class Territory():
         terminal.set(f"window: size={territory_width}x{window_height}, cellsize=auto, title='Território'")
 
         try:
-            while True:
+            while not stop_event.is_set():
                 terminal.clear()
 
                 # Desenha as bordas do território
@@ -79,6 +79,10 @@ class Territory():
                     elif direction == 'right':
                         animal.x += 1
 
+                if terminal.has_input():
+                    key = terminal.read()
+                    if key == ord('q'):
+                        break
                 time.sleep(0.2)
         except KeyboardInterrupt:
             pass
