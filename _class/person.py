@@ -1,9 +1,6 @@
 # type: ignore
-from _class import territory
 from _class.territory import Territory
 from _class.animal import Animal
-from _class.tracker import Tracker
-import random
 from abc import ABCMeta, abstractmethod
 from utils import hash_password
 from patterns.builders import TerritoryBuilder
@@ -143,7 +140,7 @@ class Admin(Person):
     return territory
     
   def add_user(self, name: str, password: str, email: str, celphone: str, territory: Territory, id: None | int = None) -> User:
-    user = User(name, password, email, celphone, territory, id)
+    user = User(name=name, email=email, password=password, celphone=celphone, territory=territory, id=id)
     self.user_list.append(user)
     return user
 

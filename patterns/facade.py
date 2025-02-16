@@ -31,7 +31,7 @@ class SystemFacade:
     def create_user(self, name: str, password: str, email: str, celphone: str, territory_id) -> User | None:
         try:
             if self.admin is not None:
-                user = self.admin.add_user(name, password, email, celphone, self.get_territory_by_id(territory_id))
+                user = self.admin.add_user(name=name, password=password, email=email, celphone=celphone, territory=self.get_territory_by_id(territory_id))
                 user.save(self.conn)
                 return user
         except sqlite3.Error as e:

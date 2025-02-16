@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 #import os
 import time
-from xml.dom.expatbuilder import theDOMImplementation
 import bcrypt
 import pwinput
 from termcolor import colored
@@ -132,9 +131,25 @@ class AdminUser(UserRole):
             elif user_input == 2:
                 clear_screen()
                 print(f"------------------------------ Novo Território ------------------------------")
+                print(f"Pressione Enter para cancelar...")
+                
                 name = input("Nome do território: ")
+                if name.strip() == "":
+                    print(colored("Criação de território cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
                 x = int(input("Coordenada X: "))
+                if str(x).strip() == "":
+                    print(colored("Criação de território cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                
                 y = int(input("Coordenada Y: "))
+                if str(y).strip() == "":
+                    print(colored("Criação de território cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                
                 facade.create_territory(name, x, y)
                 print(colored("Território criado com sucesso!", "green"))
                 time.sleep(1.5)
@@ -146,8 +161,16 @@ class AdminUser(UserRole):
                 print("Territórios cadastrados: ")
                 for territory in territories:
                     print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
-                id_delete = int(input("\nID do território para deletar: "))
-                facade.delete_territory(id_delete)
+                print("Pressione Enter para cancelar...")
+                
+                id_delete = input("\nID do território para deletar: ")
+                if id_delete.strip() == "":
+                    print(colored("Exclusão de território cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return
+                
+                id_delete_int = int(id_delete) 
+                facade.delete_territory(id_delete_int)
                 print(colored("Território excluído com sucesso!", "green"))
                 time.sleep(1.5)
 
@@ -179,11 +202,38 @@ class AdminUser(UserRole):
             elif user_input == 2:
                 clear_screen()
                 print(f"------------------------------ Novo Usuário ------------------------------")
+                print("Pressione Enter para cancelar...")
+                
                 name = input("Nome: ")
+                if name.strip() == "":
+                    print(colored("Criação de usuário cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                
                 password = pwinput.pwinput(prompt="Senha: ", mask="*")
+                if password.strip() == "":
+                    print(colored("Criação de usuário cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                
                 email = input("E-mail: ")
+                if email.strip() == "":
+                    print(colored("Criação de usuário cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                
                 phone = input("Celular: ")
+                if phone.strip() == "":
+                    print(colored("Criação de usuário cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                
                 territory_id = int(input("ID do território: "))
+                if str(territory_id).strip() == "":
+                    print(colored("Criação de usuário cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                
                 facade.create_user(name, password, email, phone, territory_id)
                 print(colored("Usuário criado com sucesso!", "green"))
                 time.sleep(1.5)
@@ -195,8 +245,16 @@ class AdminUser(UserRole):
                 print("Usuários cadastrados: ")
                 for user in users:
                     print(f"ID: {user._Person__id}, Nome: {user.name}, E-mail: {user.email}, Celular: {user.celphone}")
-                id_delete = int(input("\nID do usuário para excluir: "))
-                facade.delete_user(id_delete)
+                print("Pressione Enter para cancelar...")
+                
+                id_delete = input("\nID do usuário para excluir: ")
+                if id_delete.strip() == "":
+                    print(colored("Exclusão de usuário cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                
+                id_delete_int = int(id_delete)
+                facade.delete_user(id_delete_int)
                 print(colored("Usuário excluído com sucesso!", "green"))
                 time.sleep(1.5)
 
@@ -228,10 +286,32 @@ class AdminUser(UserRole):
             elif user_input == 2:
                 clear_screen()
                 print(f"------------------------------ Novo Animal ------------------------------")
+                print("Pressione Enter para cancelar...")
+                
                 name = input("\nNome: ")
+                if name.strip() == "":
+                    print(colored("Criação do animal cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                
                 specie = input("Espécie: ")
+                if specie.strip() == "":
+                    print(colored("Criação do animal cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                
                 age = int(input("Idade: "))
+                if str(age).strip() == "":
+                    print(colored("Criação do animal cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                  
                 territory_id = int(input("ID do território: "))
+                if str(territory_id).strip() == "":
+                    print(colored("Criação do animal cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                
                 facade.add_animal_to_territory(name, specie, age, territory_id)
                 print(colored("Animal adicionado com sucesso!", "green"))
                 time.sleep(1.5)
@@ -243,8 +323,16 @@ class AdminUser(UserRole):
                 print("Usuários cadastrados: ")
                 for animal in animals:
                      print(f"ID: {animal[0]}, Nome: {animal[1]}, Espécie: {animal[2]}, Idade: {animal[3]}, Descrição: {animal[4]}, ID território: {animal[5]},ID rastreador: {animal[6]}")
-                id_delete = int(input("\nID do animal para excluir: "))
-                facade.delete_animal(id_delete)
+                print("Pressione Enter para cancelar...")
+                
+                id_delete = input("\nID do animal para excluir: ")
+                if id_delete.strip() == "":
+                    print(colored("Criação do animal cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                
+                id_delete_int = int(id_delete)
+                facade.delete_animal(id_delete_int)
                 print(colored("Animal excluído com sucesso!", "green"))
                 time.sleep(1.5)
 
