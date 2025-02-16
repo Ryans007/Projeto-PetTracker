@@ -1,6 +1,7 @@
-import curses
-import time
+from bearlibterminal import terminal
 import random
+import time
+import textwrap
 
 class Territory():
     def __init__(self, name: str, x: int, y: int, owner = str | None, id: int | None = None) -> None:
@@ -14,66 +15,75 @@ class Territory():
     def add_animal(self, animal) -> None:
         self.animals.append(animal)
 
-    def show_territory(self, height: int, width: int):
-        def func_to_show(stdscr):
-            curses.curs_set(0)
-            stdscr.nodelay(1)
-            stdscr.timeout(100)
-            
-            territory_height = height
-            territory_width = width
-            status_line = territory_height + 1  # Linha para mensagens
-            
-            # Inicializa posições dos animais
-            for animal in self.animals:
-                animal.x = random.randint(1, territory_width - 2)
-                animal.y = random.randint(1, territory_height - 2)
-            
+    def show_territory(self):
+         # Dimensões do território e da área de mensagem
+        territory_width = self.x
+        territory_height = self.y        # área onde o território é desenhado
+        message_area_lines = 3       # número de linhas reservadas para mensagem
+        window_height = territory_height + message_area_lines
+
+        # Configura a janela do BearLibTerminal
+        terminal.open()
+        terminal.set(f"window: size={territory_width}x{window_height}, cellsize=auto, title='Território'")
+
+        try:
             while True:
-                stdscr.clear()
-                escaped_animals = []  # Lista de animais que escaparam
-                
-                # Desenha bordas do território
-                for i in range(territory_height):
-                    for j in range(territory_width):
-                        if i == 0 or i == territory_height - 1 or j == 0 or j == territory_width - 1:
-                            stdscr.addch(i, j, '#')
-                
-                # Desenha animais e verifica se escaparam
+                terminal.clear()
+
+                # Desenha as bordas do território
+                for x in range(territory_width):
+                    terminal.put(x, 0, '#')
+                    terminal.put(x, territory_height-1, '#')
+                for y in range(territory_height):
+                    terminal.put(0, y, '#')
+                    terminal.put(territory_width-1, y, '#')
+
+                # Desenha os animais que estão dentro do território
                 for animal in self.animals:
-                    # Verifica se está dentro do território
-                    inside = (1 <= animal.x < territory_width-1) and (1 <= animal.y < territory_height-1)
-                    
-                    if inside:
-                        stdscr.addstr(animal.y, animal.x, animal.name[0])
-                    else:
-                        escaped_animals.append(animal)
-                
-                # Exibe mensagem de animais que escaparam
+                    if 1 <= animal.x < territory_width-1 and 1 <= animal.y < territory_height-1:
+                        terminal.put(animal.x, animal.y, animal.name[0])
+
+                # Computa dinamicamente quais animais estão fora do território
+                escaped_animals = [
+                    animal for animal in self.animals 
+                    if not (1 <= animal.x < territory_width-1 and 1 <= animal.y < territory_height-1)
+                ]
+
+                # Constrói a mensagem de animais fora do território
                 if escaped_animals:
-                    message = "Animais fora do território: "
-                    message += ", ".join([f"{animal.name} ({animal.specie})" for animal in escaped_animals])
-                    stdscr.addstr(status_line, 0, message.ljust(territory_width))
+                    message = "Animais fora do território: " + ", ".join(a.name for a in escaped_animals)
                 else:
-                    stdscr.addstr(status_line, 0, " " * territory_width)  # Limpa linha de status
-                
-                # Movimenta cada animal individualmente
+                    message = "Nenhum animal fora do território."
+
+                # Quebra a mensagem em linhas de tamanho máximo igual à largura do território
+                wrapped_lines = textwrap.wrap(message, territory_width)
+                # Exibe somente as primeiras linhas, conforme o espaço reservado
+                wrapped_lines = wrapped_lines[:message_area_lines]
+
+                # Imprime as linhas de mensagem abaixo do território
+                for i in range(message_area_lines):
+                    line_text = wrapped_lines[i] if i < len(wrapped_lines) else ""
+                    terminal.printf(0, territory_height + i, line_text.ljust(territory_width))
+
+                terminal.refresh()
+
+                # Movimenta os animais aleatoriamente
                 for animal in self.animals:
                     direction = random.choice(['up', 'down', 'left', 'right'])
-                    
-                    if direction == 'up': animal.y -= 1
-                    elif direction == 'down': animal.y += 1
-                    elif direction == 'left': animal.x -= 1
-                    elif direction == 'right': animal.x += 1
-                
-                stdscr.refresh()
-                time.sleep(0.2)
-                
-                key = stdscr.getch()
-                if key == ord('q'):
-                    break
+                    if direction == 'up':
+                        animal.y -= 1
+                    elif direction == 'down':
+                        animal.y += 1
+                    elif direction == 'left':
+                        animal.x -= 1
+                    elif direction == 'right':
+                        animal.x += 1
 
-        curses.wrapper(func_to_show)
+                time.sleep(0.2)
+        except KeyboardInterrupt:
+            pass
+        finally:
+            terminal.close()
 
     def save(self, conn):
         cursor = conn.cursor()

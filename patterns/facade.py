@@ -1,8 +1,5 @@
-import email
-from _class import territory
 from _class.territory import Territory
 from _class.animal import Animal
-from _class.tracker import Tracker
 from _class.person import Admin, User
 #import random
 import sqlite3
@@ -141,7 +138,7 @@ class SystemFacade:
             animals = self.list_animals_in_territory(territory_id)
             # Limpar animais existentes e adicionar os novos
             territory.animals = animals
-            territory.show_territory(territory.x, territory.y)   
+            territory.show_territory()   
 
     def get_admin_by_email(self, email: str):
         self.cursor.execute("SELECT * FROM admins WHERE email = ?", (email,))
