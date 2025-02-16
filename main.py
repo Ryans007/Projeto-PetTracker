@@ -23,7 +23,8 @@ class RegularUser(UserRole):
             print("\n------------------------------ Menu do Usuário ------------------------------")
             print("1 - Visualizar Território")
             print("2 - Voltar ao Menu Principal")
-            print("3 - Encerrar Programa")
+            print("3 - Deslogar")
+            print("4 - Encerrar Programa")
 
             try:
                 user_input = int(input("Escolha sua opção: "))
@@ -56,6 +57,8 @@ class RegularUser(UserRole):
             elif user_input == 2:
                 return  # Volta ao menu principal
             elif user_input == 3:
+                login_screen(facade)
+            elif user_input == 4:
                 print("Encerrando o programa...")
                 facade.close_connection()
                 exit()
@@ -70,7 +73,8 @@ class AdminUser(UserRole):
             print("2 - Opções de Usuários")
             print("3 - Opções de Animais")
             print("4 - Voltar ao Menu Principal")
-            print("5 - Encerrar Programa")
+            print("5 - Deslogar")
+            print("6 - Encerrar Programa")
 
             try:
                 admin_input = int(input("Escolha sua opção: "))
@@ -87,6 +91,8 @@ class AdminUser(UserRole):
             elif admin_input == 4:
                 return  # Volta ao menu principal
             elif admin_input == 5:
+                login_screen(facade)
+            elif admin_input == 6:
                 print("Encerrando o programa...")
                 facade.close_connection()
                 exit()
@@ -269,7 +275,7 @@ class AdminUser(UserRole):
             print("2 - Adicionar Animal")
             print("3 - Excluir Animal")
             print("4 - Voltar ao Menu Admin")
-
+            
             try:
                 user_input = int(input("Escolha sua opção: "))
             except ValueError:

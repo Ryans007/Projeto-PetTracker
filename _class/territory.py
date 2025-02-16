@@ -24,7 +24,7 @@ class Territory():
 
         # Configura a janela do BearLibTerminal
         terminal.open()
-        terminal.set(f"window: size={territory_width}x{window_height}, cellsize=auto, title='Território'")
+        terminal.set(f"window: size={territory_width}x{window_height}, cellsize=auto, title='Território {self.name}'")
 
         try:
             while not stop_event.is_set():
