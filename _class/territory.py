@@ -16,10 +16,10 @@ class Territory():
         self.animals.append(animal)
 
     def show_territory(self, stop_event):
-         # Dimensões do território e da área de mensagem
+        # Dimensões do território e da área de mensagem
         territory_width = self.x
-        territory_height = self.y        # área onde o território é desenhado
-        message_area_lines = 3       # número de linhas reservadas para mensagem
+        territory_height = self.y  # área onde o território é desenhado
+        message_area_lines = 3  # número de linhas reservadas para mensagem
         window_height = territory_height + message_area_lines
 
         # Configura a janela do BearLibTerminal
@@ -33,36 +33,42 @@ class Territory():
                 # Desenha as bordas do território
                 for x in range(territory_width):
                     terminal.put(x, 0, '#')
-                    terminal.put(x, territory_height-1, '#')
+                    terminal.put(x, territory_height - 1, '#')
                 for y in range(territory_height):
                     terminal.put(0, y, '#')
-                    terminal.put(territory_width-1, y, '#')
+                    terminal.put(territory_width - 1, y, '#')
 
                 # Desenha os animais que estão dentro do território
                 for animal in self.animals:
-                    if 1 <= animal.x < territory_width-1 and 1 <= animal.y < territory_height-1:
+                    if 1 <= animal.x < territory_width - 1 and 1 <= animal.y < territory_height - 1:
                         terminal.put(animal.x, animal.y, animal.name[0])
 
-                # Computa dinamicamente quais animais estão fora do território
+                # Computa dinamicamente quais animais estão fora e dentro do território
                 escaped_animals = [
-                    animal for animal in self.animals 
-                    if not (1 <= animal.x < territory_width-1 and 1 <= animal.y < territory_height-1)
+                    animal for animal in self.animals
+                    if not (1 <= animal.x < territory_width - 1 and 1 <= animal.y < territory_height - 1)
                 ]
 
-                # Constrói a mensagem de animais fora do território
-                if escaped_animals:
-                    message = "Animais fora do território: " + ", ".join(a.name for a in escaped_animals)
-                else:
-                    message = "Nenhum animal fora do território."
+                inside_animals = [
+                    animal for animal in self.animals
+                    if 1 <= animal.x < territory_width - 1 and 1 <= animal.y < territory_height - 1
+                ]
 
-                # Quebra a mensagem em linhas de tamanho máximo igual à largura do território
-                wrapped_lines = textwrap.wrap(message, territory_width)
-                # Exibe somente as primeiras linhas, conforme o espaço reservado
-                wrapped_lines = wrapped_lines[:message_area_lines]
+                # Constrói as mensagens
+                message_escaped = "Animais fora do território: " + ", ".join(a.name for a in escaped_animals) if escaped_animals else "Nenhum animal fora do território."
+                message_inside = "Animais dentro do território: " + ", ".join(a.name for a in inside_animals) if inside_animals else "Nenhum animal dentro do território."
+
+                # Quebra as mensagens em linhas de tamanho máximo igual à largura do território
+                wrapped_escaped = textwrap.wrap(message_escaped, territory_width)
+                wrapped_inside = textwrap.wrap(message_inside, territory_width)
+
+                # Combina as mensagens, limitando ao número de linhas disponíveis
+                combined_lines = wrapped_escaped + wrapped_inside
+                combined_lines = combined_lines[:message_area_lines]
 
                 # Imprime as linhas de mensagem abaixo do território
                 for i in range(message_area_lines):
-                    line_text = wrapped_lines[i] if i < len(wrapped_lines) else ""
+                    line_text = combined_lines[i] if i < len(combined_lines) else ""
                     terminal.printf(0, territory_height + i, line_text.ljust(territory_width))
 
                 terminal.refresh()
@@ -79,10 +85,12 @@ class Territory():
                     elif direction == 'right':
                         animal.x += 1
 
+                # Verifica se o usuário pressionou uma tecla para sair
                 if terminal.has_input():
                     key = terminal.read()
-                    if key == ord('q'):
+                    if key == terminal.TK_Q:  # BearLibTerminal usa TK_Q para a tecla 'q'
                         break
+
                 time.sleep(0.2)
         except KeyboardInterrupt:
             pass
