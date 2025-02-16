@@ -179,8 +179,8 @@ class AdminUser(UserRole):
             elif user_input == 2:
                 clear_screen()
                 print(f"------------------------------ Novo Usuário ------------------------------")
-                name = input("\nNome: ")
-                password = input("Senha: ")
+                name = input("Nome: ")
+                password = pwinput.pwinput(prompt="Senha: ", mask="*")
                 email = input("E-mail: ")
                 phone = input("Celular: ")
                 territory_id = int(input("ID do território: "))

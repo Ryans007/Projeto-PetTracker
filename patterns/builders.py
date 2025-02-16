@@ -1,4 +1,3 @@
-from re import S
 from _class.territory import Territory
 
 class TerritoryBuilder:
