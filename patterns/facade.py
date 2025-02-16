@@ -6,8 +6,6 @@ from _class.tracker import Tracker
 from _class.person import Admin, User
 #import random
 import sqlite3
-from utils import hash_password
-
 from database.database import database_init
 
 class SystemFacade:
@@ -64,9 +62,9 @@ class SystemFacade:
             
     def create_territory(self, name: str, x: int, y: int) -> Territory | None:
         try:
-            territory = Territory(name=name, x=x, y=y)
-            territory.save(self.conn)
-            return territory
+            if self.admin is not None:
+                territory = self.admin.add_territory(name, x, y, self.conn)
+                return territory
         except sqlite3.Error as e:
             self.conn.rollback()
             print(f"Erro ao criar território: {e}")

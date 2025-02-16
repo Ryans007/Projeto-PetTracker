@@ -7,7 +7,7 @@ Tarefas a fazer:
 6 - Ajeitar a função de show_territory
 7 - Implementar o envio das localização para ser mostrada no território (possivelmente com observer)
 8 - Revisar o Facade
-9 - Implementar Factory ou algum padrão de criação
+9 - Implementar Factory ou algum padrão de criação ✅ (Builder foi implementado, no entanto da para criar mais padrões de criação)
 10 - Revisar a implementação do banco de dados
 11 - Adicionar a tabela de usuário ao banco de dados ✅
 12 - Implementar o registro e consultas de ocorrências
@@ -21,8 +21,8 @@ Tarefas a fazer:
 20 - No momento da criação do usuário, exibir os territórios que ainda estão sem dono
 21 - Implementar uma logica para colocar descrição no animal - Fácil 
 --------------------------------------------------- Padrões Implementados------------------------------------------------------------
-22 - Padrão Facade ✅
-23 - Padrão Strategy ✅
+1 - Padrão Facade ✅
+2 - Padrão Strategy ✅
   Explicação: 
     Strategy (Estratégia)
     Onde é aplicado: Nas classes UserRole, RegularUser e AdminUser.
@@ -34,7 +34,7 @@ Tarefas a fazer:
     A classe abstrata UserRole define o método show_menu(), que é implementado de forma diferente em RegularUser (menu limitado) e AdminUser (menu completo).
 
     Durante o login, o tipo de usuário determina qual estratégia (AdminUser ou RegularUser) será usada. O método show_menu() é executado polimorficamente, adaptando o menu conforme o papel.
-
+3 - builder ✅ (Da pra implementa-lo mais vezes)
 
 Tarefas feitas:
 1 - Registro de Animal

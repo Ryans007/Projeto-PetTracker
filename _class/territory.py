@@ -3,7 +3,7 @@ import time
 import random
 
 class Territory():
-    def __init__(self, name: str, x: int, y: int, owner = None | str, id: int | None = None) -> None:
+    def __init__(self, name: str, x: int, y: int, owner = str | None, id: int | None = None) -> None:
         self.id = id
         self.name = name
         self.x = x

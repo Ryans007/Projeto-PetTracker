@@ -6,6 +6,7 @@ from _class.tracker import Tracker
 import random
 from abc import ABCMeta, abstractmethod
 from utils import hash_password
+from patterns.builders import TerritoryBuilder
 
 class Person(metaclass=ABCMeta):
   def __init__(self, name: str, email: str, password: str, celphone: str, id: None | int = None) -> None:
@@ -124,25 +125,22 @@ class Admin(Person):
     self.territory_list = []
     self.animal_list = []
     
-  def add_territory(self, name: str, x: int, y: int, owner: str = None):
-    owner = self.name
-    territory = Territory(name, x, y, owner)
-    self.territory_list.append(territory)
-    return territory
-    
   def add_animal(self, name: str, specie: str, age: int, territory: Territory, description: str = "No Description"):
     animal = Animal(name=name, specie=specie, age=age, territory=territory, description=description)
     self.animal_list.append(animal)
     territory.add_animal(animal)
     return animal
   
-  def add_territory(self , name: str, x: int, y: int, owner: str):
-      owner = self.name
-      territory = Territory(name, x, y, owner)
-      self.territory_list.append(territory)
-      for animal in self.animal_list:
-        territory.add_animal(animal)
-      return territory  
+  def add_territory(self , name: str, x: int, y: int, conn):
+    builder = TerritoryBuilder()
+    territory = (
+        builder.set_name(name)
+              .set_dimensions(x, y)
+              .set_owner(self.name)
+              .build()
+    )
+    territory.save(conn)
+    return territory
     
   def add_user(self, name: str, password: str, email: str, celphone: str, territory: Territory, id: None | int = None) -> User:
     user = User(name, password, email, celphone, territory, id)

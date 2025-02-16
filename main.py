@@ -36,29 +36,16 @@ class RegularUser(UserRole):
                 territories = facade.list_territories()
                 print("Territórios cadastrados: ")
                 for territory in territories:
-                    print(f"ID: {territory[0]}, Nome: {territory[1]}, X: {territory[2]}, Y: {territory[3]}")
-                    #print(facade.show_territory(territory))
-                    try:
-                        territory_id = int(input("Digite o ID do território que deseja visualizar: "))
+                    print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
+                try:
+                    territory_id = int(input("Digite o ID do território que deseja visualizar: "))
+                    facade.show_territory(territory_id)
+                    time.sleep(10)
+                except ValueError:
+                    print("ID inválido! Digite um número.")  
 
-                        territory = None
-                        for t in territories:
-                            if t[0] == territory_id:  
-                                territory = t
-                                break
-                        if territory:
-                            print(f"Visualizando território ID {territory[0]} - {territory[1]}")
-                            #print(territory)
-                            #print(facade.show_territory(territory[2], territory[3]))
-                            facade.show_territory(territory[2], territory[3])
-                            time.sleep(10)
-                        else:
-                            print(colored("Território não encontrado!", "red"))
-                    except ValueError:
-                        print("ID inválido! Digite um número.")  
             elif user_input == 2:
                 return  # Volta ao menu principal
-
             elif user_input == 3:
                 print("Encerrando o programa...")
                 facade.close_connection()
@@ -127,7 +114,7 @@ class AdminUser(UserRole):
             elif user_input == 2:
                 clear_screen()
                 print(f"------------------------------ Novo Território ------------------------------")
-                name = input("\nNome do território: ")
+                name = input("Nome do território: ")
                 x = int(input("Coordenada X: "))
                 y = int(input("Coordenada Y: "))
                 facade.create_territory(name, x, y)
