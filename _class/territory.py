@@ -5,12 +5,52 @@ import textwrap
 
 class Territory():
     def __init__(self, name: str, x: int, y: int, owner_id: int, id: int | None = None) -> None:
-        self.id = id
-        self.name = name
-        self.x = int(238/4)
-        self.y = int(133/4)
-        self.owner_id = owner_id
+        self.__id = id
+        self.__name = name
+        self.__x = int(238/4)
+        self.__y = int(133/4)
+        self.__owner_id = owner_id
         self.animals = []
+    
+    @property
+    def id(self) -> int | None:
+        return self.__id
+    
+    @id.setter
+    def id(self, id: int) -> None:
+        self.__id = id
+    
+    @property
+    def name(self) -> str:
+        return self.__name
+    
+    @name.setter
+    def name(self, name: str) -> None:
+        self.__name = name
+    
+    @property
+    def x(self) -> int:
+        return self.__x 
+    
+    @x.setter
+    def x(self, x: int) -> None:
+        self.__x = x
+        
+    @property
+    def y(self) -> int:
+        return self.__y 
+    
+    @y.setter
+    def y(self, y: int) -> None:
+        self.__y = y
+
+    @property
+    def owner_id(self) -> int:
+        return self.__owner_id 
+    
+    @owner_id.setter
+    def owner_id(self, owner_id: int) -> None:
+        self.__owner_id = owner_id
 
     def add_animal(self, animal) -> None:
         self.animals.append(animal)
@@ -129,7 +169,7 @@ class Territory():
             cursor = conn.cursor()
             cursor.execute('DELETE FROM territories WHERE id = ?', (self.id,))
             conn.commit()
-            self.id = None
+            self.id = 0
             
     def __repr__(self):
         return f"Territory(id={self.id}, name={self.name}, x={self.x}, y={self.y}, owner_id={self.owner_id})"
