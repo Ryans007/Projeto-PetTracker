@@ -98,7 +98,7 @@ class User(Person):
       cursor.close()
   
   @staticmethod
-  def get_by_id(conn, id: int) -> Person | None:
+  def get_by_id(conn, id: int) -> 'User':
       cursor = conn.cursor()
       cursor.execute('SELECT * FROM users WHERE id = ?', (id,))
       row = cursor.fetchone()

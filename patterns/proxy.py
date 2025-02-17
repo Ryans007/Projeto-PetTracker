@@ -5,7 +5,7 @@ class UserProxy:
     _cache = {}
       
     @staticmethod
-    def get_by_id(conn, id: int):
+    def get_by_id(conn, id: int) -> User:
       if id in UserProxy._cache:
         return UserProxy._cache[id]
       user = User.get_by_id(conn, id)
@@ -13,6 +13,12 @@ class UserProxy:
         UserProxy._cache[id] = user
       return user
     
+    @staticmethod
+    def save(user: User, conn):
+        user.save(conn)
+        if user.id:
+            UserProxy._cache[user.id] = user
+            
     @staticmethod
     def delete(user: User, conn):
         user.delete(conn)

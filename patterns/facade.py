@@ -2,9 +2,9 @@ from tracemalloc import stop
 from _class.territory import Territory
 from _class.animal import Animal
 from _class.person import Admin, User
-#import random
 import sqlite3
 from database.database import database_init
+from patterns.proxy import TerritoryProxy, UserProxy, AdminProxy
 
 class SystemFacade:
     def __init__(self):        
@@ -14,10 +14,10 @@ class SystemFacade:
         self.admin = None
         
     def get_territory_by_id(self, id: int):
-        return Territory.get_by_id(self.conn, id)
+        return TerritoryProxy.get_by_id(self.conn, id)
  
-    def get_user_by_id(self, id: int):
-        return User.get_by_id(self.conn, id)        
+    def get_user_by_id(self, id: int) -> User:
+        return UserProxy.get_by_id(self.conn, id)        
     
     def create_admin(self, name: str, email: str, password: str,celphone: str):
         try:
@@ -33,7 +33,7 @@ class SystemFacade:
         try:
             if self.admin is not None:
                 user = self.admin.add_user(name=name, password=password, email=email, celphone=celphone, territory=self.get_territory_by_id(territory_id))
-                user.save(self.conn)
+                UserProxy.save(user, self.conn)
                 return user
         except sqlite3.Error as e:
             self.conn.rollback()
@@ -41,7 +41,7 @@ class SystemFacade:
             return None
 
     def update_user(self, id:int, name: str, password: str, email: str, celphone: str, territory: Territory):
-        user = self.get_user_by_id(id)
+        user: User = self.get_user_by_id(id)
         if user:
             if name:
                 user.name = name
@@ -51,12 +51,12 @@ class SystemFacade:
                 user.email = email
             if celphone:
                 user.celphone = celphone
-            user.save(self.conn)
+            UserProxy.save(user, self.conn)
     
     def delete_user(self, id: int):
         user = self.get_user_by_id(id)
         if user:
-            user.delete(self.conn)
+            UserProxy.delete(user, self.conn)
             
     def create_territory(self, name: str, x: int, y: int, id_user: int) -> Territory | None:
         try:
