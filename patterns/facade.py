@@ -144,10 +144,10 @@ class SystemFacade:
             territory.animals = animals
             territory.show_territory(stop_event)
     
-    def show_territory_user(self, user_id: int, stop_event):
+    def show_territory_user(self, territory_id: int, stop_event):
         self.cursor.execute('''SELECT * 
                             FROM territories t 
-                            JOIN users u ON t.owner_id = ?''', (user_id,))
+                            JOIN users u ON t.id = ?''', (territory_id,))
         rows = self.cursor.fetchall()
         for row in rows:
             territory = Territory(id=row[0], name=row[2], x=row[3], y=row[4], owner_id=row[5])

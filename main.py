@@ -3,6 +3,7 @@ import time
 import bcrypt
 import pwinput
 from termcolor import colored
+from _class import territory
 from patterns.facade import SystemFacade
 from utils import clear_screen
 from _class.person import Admin
@@ -361,8 +362,8 @@ def login_screen(facade):
             facade.admin = Admin(admin[1], admin[2], admin[3], admin[4])
             role = AdminUser()
         elif user and bcrypt.checkpw(senha.encode(), user[3]):
-            user_id = user[0]
-            role = RegularUser(user_id)
+            territory_id = user[5]
+            role = RegularUser(territory_id)
         else:
             print("Login ou senha inválidos, tente novamente.")
             time.sleep(1.5)
