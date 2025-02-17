@@ -1,3 +1,4 @@
+from tracemalloc import stop
 from _class.territory import Territory
 from _class.animal import Animal
 from _class.person import Admin, User
@@ -57,10 +58,10 @@ class SystemFacade:
         if user:
             user.delete(self.conn)
             
-    def create_territory(self, name: str, x: int, y: int) -> Territory | None:
+    def create_territory(self, name: str, x: int, y: int, id_user: int) -> Territory | None:
         try:
             if self.admin is not None:
-                territory = self.admin.add_territory(name, x, y, self.conn)
+                territory = self.admin.add_territory(name=name, x=x, y=y, owner_id=id_user, conn=self.conn)
                 return territory
         except sqlite3.Error as e:
             self.conn.rollback()
@@ -82,6 +83,9 @@ class SystemFacade:
         territory = self.get_territory_by_id(id)
         if territory:
             territory.delete(self.conn)
+            self.cursor.execute('''
+            DELETE from animals WHERE                    
+            territory_id = ?''', (id,))
            
     def delete_animal(self, id: int):
         self.cursor.execute('''
@@ -112,7 +116,7 @@ class SystemFacade:
     def list_territories(self):
         self.cursor.execute('SELECT * FROM territories')
         rows = self.cursor.fetchall()
-        return [Territory(id=row[0], name=row[1], x=row[2], y=row[3]) for row in rows]
+        return [Territory(id=row[0], name=row[1], x=row[2], y=row[3], owner_id=row[4]) for row in rows]
     
     def list_animais(self):
         self.cursor.execute('SELECT * From animals')
@@ -131,18 +135,34 @@ class SystemFacade:
     def close_connection(self):
         self.conn.close()
 
-    def show_territory(self, territory_id: int, stop_event):
+    def show_territory_admin(self, territory_id: int, stop_event):
         territory = self.get_territory_by_id(territory_id)
         if territory:
             # Buscar animais associados ao território
             animals = self.list_animals_in_territory(territory_id)
             # Limpar animais existentes e adicionar os novos
             territory.animals = animals
-            territory.show_territory(stop_event)   
-
+            territory.show_territory(stop_event)
+    
+    def show_territory_user(self, user_id: int, stop_event):
+        self.cursor.execute('''SELECT * 
+                            FROM territories t 
+                            JOIN users u ON t.owner_id = ?''', (user_id,))
+        rows = self.cursor.fetchall()
+        for row in rows:
+            territory = Territory(id=row[0], name=row[2], x=row[3], y=row[4], owner_id=row[5])
+            if territory:
+                if territory.id is not None:
+                    animals = self.list_animals_in_territory(territory.id)
+                    territory.animals = animals
+                    territory.show_territory(stop_event)
+                else:
+                    raise Exception("Erro ao buscar território: ID inexistente!!!")
+         
     def get_admin_by_email(self, email: str):
         self.cursor.execute("SELECT * FROM admins WHERE email = ?", (email,))
         return self.cursor.fetchone()
+    
     def get_user_by_email(self, email: str):
         self.cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
         return self.cursor.fetchone()

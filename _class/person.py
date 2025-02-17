@@ -128,12 +128,12 @@ class Admin(Person):
     territory.add_animal(animal)
     return animal
   
-  def add_territory(self , name: str, x: int, y: int, conn):
+  def add_territory(self , name: str, x: int, y: int, owner_id: int, conn):
     builder = TerritoryBuilder()
     territory = (
         builder.set_name(name)
               .set_dimensions(x, y)
-              .set_owner(self.name)
+              .set_owner(owner_id)
               .build()
     )
     territory.save(conn)

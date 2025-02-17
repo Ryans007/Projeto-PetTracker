@@ -4,12 +4,12 @@ import time
 import textwrap
 
 class Territory():
-    def __init__(self, name: str, x: int, y: int, owner = str | None, id: int | None = None) -> None:
+    def __init__(self, name: str, x: int, y: int, owner_id: int, id: int | None = None) -> None:
         self.id = id
         self.name = name
-        self.x = x
-        self.y = y
-        self.owner = owner
+        self.x = int(238/4)
+        self.y = int(133/4)
+        self.owner_id = owner_id
         self.animals = []
 
     def add_animal(self, animal) -> None:
@@ -102,16 +102,16 @@ class Territory():
         try:
             if self.id is None:
                 cursor.execute('''
-                            INSERT INTO territories (name, x, y)
-                            VALUES (?, ?, ?)
-                            ''', (self.name, self.x, self.y))
+                            INSERT INTO territories (name, x, y, owner_id)
+                            VALUES (?, ?, ?, ?)
+                            ''', (self.name, self.x, self.y, self.owner_id))
                 self.id = cursor.lastrowid
             else:
                 cursor.execute('''
                             UPDATE territories
-                            SET name = ?, x = ?, y ?
+                            SET name = ?, x = ?, y = ?, owner_id = ?
                             WHERE id = ?
-                            ''', (self.name, self.x, self.y, self.id))
+                            ''', (self.name, self.x, self.y, self.id, self.owner_id))
             conn.commit()
         finally:
             cursor.close()
@@ -121,7 +121,7 @@ class Territory():
         cursor.execute('SELECT * FROM territories WHERE id = ?', (id,))
         row = cursor.fetchone()
         if row:
-            return Territory(id=row[0], name=row[1], x=row[2], y=row[3])
+            return Territory(id=row[0], name=row[1], x=row[2], y=row[3], owner_id=row[4])
         raise Exception("Nenhum territorio corresponde ao id")
         
     def delete(self, conn):
@@ -132,6 +132,6 @@ class Territory():
             self.id = None
             
     def __repr__(self):
-        return f"Territory(id={self.id}, name={self.name}, x={self.x}, y={self.y})"
+        return f"Territory(id={self.id}, name={self.name}, x={self.x}, y={self.y}, owner_id={self.owner_id})"
 
 

@@ -2,7 +2,7 @@ from _class.territory import Territory
 
 class TerritoryBuilder:
     def __init__(self):
-        self.territory = Territory(name="", x=0, y=0,)
+        self.territory = Territory(name="", x=0, y=0, owner_id=0)
     
     def set_name(self, name: str):
         self.territory.name = name
@@ -13,8 +13,8 @@ class TerritoryBuilder:
         self.territory.y = y
         return self
     
-    def set_owner(self, owner: str | None = None) -> 'TerritoryBuilder':
-        self.territory.owner = owner # type: ignore
+    def set_owner(self, owner_id: int ) -> 'TerritoryBuilder':
+        self.territory.owner_id = owner_id 
         return self
     
     def build(self):

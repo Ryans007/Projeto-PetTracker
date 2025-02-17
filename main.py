@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-#import os
 import time
 import bcrypt
 import pwinput
@@ -17,6 +16,9 @@ class UserRole(ABC):
 
 # Classe para usuários comuns (apenas visualizar territórios)
 class RegularUser(UserRole):
+    def __init__(self, user_id: int) -> None:
+        super().__init__()
+        self.user_id = user_id
     def show_menu(self, facade):
         while True:
             clear_screen()
@@ -34,26 +36,16 @@ class RegularUser(UserRole):
 
             if user_input == 1:
                 clear_screen()
-                print(f"------------------------------ Territórios ------------------------------")
-                territories = facade.list_territories()
-                print("Territórios cadastrados: ")
-                for territory in territories:
-                    print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
-                try:
-                    territory_id = int(input("Digite o ID do território que deseja visualizar: "))
-                    # Cria o evento de parada e inicia a thread da simulação
-                    stop_event = threading.Event()
-                    sim_thread = threading.Thread(target=lambda: facade.show_territory(territory_id, stop_event))
-                    sim_thread.start()
-                    print("\nA simulação do território foi iniciada em uma nova janela.")
-                    print("Para voltar ao menu, volte ao terminal do menu e pressione Enter.")
-                    input() # Aguarda o usuário pressionar Enter no terminal principal
-                    # Sinaliza para a simulação encerrar e aguarda a thread terminar
-                    stop_event.set()
-                    sim_thread.join()
-                except ValueError:
-                    print("ID inválido! Digite um número.")  
-
+                # Cria o evento de parada e inicia a thread da simulação
+                stop_event = threading.Event()
+                sim_thread = threading.Thread(target=lambda: facade.show_territory_user(self.user_id, stop_event))
+                sim_thread.start()
+                print("\nA simulação do território foi iniciada em uma nova janela.")
+                print("Para voltar ao menu, volte ao terminal do menu e pressione Enter.")
+                input() # Aguarda o usuário pressionar Enter no terminal principal
+                # Sinaliza para a simulação encerrar e aguarda a thread terminar
+                stop_event.set()
+                sim_thread.join()
             elif user_input == 2:
                 return  # Volta ao menu principal
             elif user_input == 3:
@@ -123,7 +115,7 @@ class AdminUser(UserRole):
                     territory_id = int(input("Digite o ID do território que deseja visualizar: "))
                     # Cria o evento de parada e inicia a thread da simulação
                     stop_event = threading.Event()
-                    sim_thread = threading.Thread(target=lambda: facade.show_territory(territory_id, stop_event))
+                    sim_thread = threading.Thread(target=lambda: facade.show_territory_admin(territory_id, stop_event))
                     sim_thread.start()
                     print("\nA simulação do território foi iniciada em uma nova janela.")
                     print("Para voltar ao menu, volte ao terminal do menu e pressione Enter.")
@@ -144,19 +136,28 @@ class AdminUser(UserRole):
                     print(colored("Criação de território cancelada...", "yellow"))
                     time.sleep(1.5)
                     return 
-                x = int(input("Coordenada X: "))
-                if str(x).strip() == "":
+                x = input("Coordenada X: ")
+                if x.strip() == "":
                     print(colored("Criação de território cancelada...", "yellow"))
                     time.sleep(1.5)
                     return 
+                x_int = int(x)
                 
-                y = int(input("Coordenada Y: "))
-                if str(y).strip() == "":
+                y = input("Coordenada Y: ")
+                if y.strip() == "":
                     print(colored("Criação de território cancelada...", "yellow"))
                     time.sleep(1.5)
                     return 
+                y_int = int(y)
                 
-                facade.create_territory(name, x, y)
+                user_id = input("Id do usuário associado: ")
+                if user_id.strip() == "":
+                    print(colored("Criação de território cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return
+                user_id_int = int(user_id) 
+                
+                facade.create_territory(name, x_int, y_int, user_id_int)
                 print(colored("Território criado com sucesso!", "green"))
                 time.sleep(1.5)
 
@@ -294,7 +295,7 @@ class AdminUser(UserRole):
                 print(f"------------------------------ Novo Animal ------------------------------")
                 print("Pressione Enter para cancelar...")
                 
-                name = input("\nNome: ")
+                name = input("Nome: ")
                 if name.strip() == "":
                     print(colored("Criação do animal cancelada...", "yellow"))
                     time.sleep(1.5)
@@ -360,7 +361,8 @@ def login_screen(facade):
             facade.admin = Admin(admin[1], admin[2], admin[3], admin[4])
             role = AdminUser()
         elif user and bcrypt.checkpw(senha.encode(), user[3]):
-            role = RegularUser()
+            user_id = user[0]
+            role = RegularUser(user_id)
         else:
             print("Login ou senha inválidos, tente novamente.")
             time.sleep(1.5)
