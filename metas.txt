@@ -35,6 +35,8 @@ Tarefas a fazer:
 
     Durante o login, o tipo de usuário determina qual estratégia (AdminUser ou RegularUser) será usada. O método show_menu() é executado polimorficamente, adaptando o menu conforme o papel.
 3 - builder ✅ (Da pra implementa-lo mais vezes)
+4 - proxy ✅
+5 - template_method ✅
 
 Tarefas feitas:
 1 - Registro de Animal

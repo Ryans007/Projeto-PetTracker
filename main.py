@@ -236,13 +236,13 @@ class AdminUser(UserRole):
                     time.sleep(1.5)
                     return 
                 
-                territory_id = int(input("ID do território: "))
-                if str(territory_id).strip() == "":
+                territory_id = input("ID do território: ")
+                if territory_id.strip() == "":
                     print(colored("Criação de usuário cancelada...", "yellow"))
                     time.sleep(1.5)
                     return 
-                
-                facade.create_user(name, password, email, phone, territory_id)
+                territory_id_int = int(territory_id)
+                facade.create_user(name, password, email, phone, territory_id_int)
                 print(colored("Usuário criado com sucesso!", "green"))
                 time.sleep(1.5)
 
