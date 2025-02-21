@@ -4,7 +4,7 @@ import time
 import textwrap
 
 class Territory():
-    def __init__(self, name: str, x: int, y: int, owner_id: int, id: int | None = None) -> None:
+    def __init__(self, name: str, x: int, y: int, owner_id: int| None = None, id: int | None = None) -> None:
         self.__id = id
         self.__name = name
         self.__x = int(238/4)
@@ -45,7 +45,7 @@ class Territory():
         self.__y = y
 
     @property
-    def owner_id(self) -> int:
+    def owner_id(self) -> int | None:
         return self.__owner_id 
     
     @owner_id.setter
@@ -61,10 +61,11 @@ class Territory():
         territory_height = self.y  # área onde o território é desenhado
         message_area_lines = 3  # número de linhas reservadas para mensagem
         window_height = territory_height + message_area_lines
+        print(self.name, self.x, self.y, self.owner_id, self.id)
 
         # Configura a janela do BearLibTerminal
         terminal.open()
-        terminal.set(f"window: size={territory_width}x{window_height}, cellsize=auto, title='Território {self.name}'")
+        terminal.set(f"window: size={territory_width}x{window_height}, cellsize=auto, title='{self.name}'")
 
         try:
             while not stop_event.is_set():

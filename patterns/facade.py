@@ -1,10 +1,9 @@
-from tracemalloc import stop
 from _class.territory import Territory
 from _class.animal import Animal
 from _class.person import Admin, User
 import sqlite3
 from database.database import database_init
-from patterns.proxy import TerritoryProxy, UserProxy, AdminProxy
+from patterns.proxy import TerritoryProxy, UserProxy
 
 class SystemFacade:
     def __init__(self):        
@@ -33,6 +32,11 @@ class SystemFacade:
         try:
             if self.admin is not None:
                 user = self.admin.add_user(name=name, password=password, email=email, celphone=celphone, territory=self.get_territory_by_id(territory_id))
+                territorie_associeted = self.get_territory_by_id(territory_id)
+                if territorie_associeted:
+                    territorie_associeted.owner_id = territory_id
+                    territorie_associeted.save(self.conn)
+                
                 UserProxy.save(user, self.conn)
                 return user
         except sqlite3.Error as e:
@@ -58,10 +62,10 @@ class SystemFacade:
         if user:
             UserProxy.delete(user, self.conn)
             
-    def create_territory(self, name: str, x: int, y: int, id_user: int) -> Territory | None:
+    def create_territory(self, name: str, x: int, y: int) -> Territory | None:
         try:
             if self.admin is not None:
-                territory = self.admin.add_territory(name=name, x=x, y=y, owner_id=id_user, conn=self.conn)
+                territory = self.admin.add_territory(name=name, x=x, y=y, conn=self.conn)
                 return territory
         except sqlite3.Error as e:
             self.conn.rollback()
@@ -143,7 +147,14 @@ class SystemFacade:
             # Limpar animais existentes e adicionar os novos
             territory.animals = animals
             territory.show_territory(stop_event)
-    
+            
+    def show_territory_null(self):
+        self.cursor.execute('''SELECT * 
+                            FROM territories WHERE owner_id IS NULL
+                            ''')
+        rows = self.cursor.fetchall()
+        return [Territory(id=row[0], name=row[1], x=row[2], y=row[3], owner_id=row[4]) for row in rows]
+
     def show_territory_user(self, territory_id: int, stop_event):
         self.cursor.execute('''SELECT * 
                             FROM territories t 

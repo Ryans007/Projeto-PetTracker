@@ -2,7 +2,7 @@ from _class.territory import Territory
 
 class TerritoryBuilder:
     def __init__(self):
-        self.territory = Territory(name="", x=0, y=0, owner_id=0)
+        self.territory = Territory(name="", x=0, y=0, owner_id=None)
     
     def set_name(self, name: str):
         self.territory.name = name

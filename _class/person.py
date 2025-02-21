@@ -134,7 +134,7 @@ class Admin(PersonTemplate):
       territory.add_animal(animal)
       return animal
     
-    def add_territory(self , name: str, x: int, y: int, owner_id: int, conn):
+    def add_territory(self , name: str, x: int, y: int, conn, owner_id: int | None = None):
       builder = TerritoryBuilder()
       territory = (
           builder.set_name(name)

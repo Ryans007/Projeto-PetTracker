@@ -151,14 +151,7 @@ class AdminUser(UserRole):
                     return 
                 y_int = int(y)
                 
-                user_id = input("Id do usuário associado: ")
-                if user_id.strip() == "":
-                    print(colored("Criação de território cancelada...", "yellow"))
-                    time.sleep(1.5)
-                    return
-                user_id_int = int(user_id) 
-                
-                facade.create_territory(name, x_int, y_int, user_id_int)
+                facade.create_territory(name, x_int, y_int)
                 print(colored("Território criado com sucesso!", "green"))
                 time.sleep(1.5)
 
@@ -209,42 +202,51 @@ class AdminUser(UserRole):
 
             elif user_input == 2:
                 clear_screen()
-                print(f"------------------------------ Novo Usuário ------------------------------")
-                print("Pressione Enter para cancelar...")
+                territories = facade.show_territory_null()
                 
-                name = input("Nome: ")
-                if name.strip() == "":
-                    print(colored("Criação de usuário cancelada...", "yellow"))
-                    time.sleep(1.5)
-                    return 
+                if territories:
+                    print(f"------------------------------ Novo Usuário ------------------------------")
+                    print("Pressione Enter para cancelar...")
+                    
+                    name = input("Nome: ")
+                    if name.strip() == "":
+                        print(colored("Criação de usuário cancelada...", "yellow"))
+                        time.sleep(1.5)
+                        return 
+                    
+                    password = pwinput.pwinput(prompt="Senha: ", mask="*")
+                    if password.strip() == "":
+                        print(colored("Criação de usuário cancelada...", "yellow"))
+                        time.sleep(1.5)
+                        return 
+                    
+                    email = input("E-mail: ")
+                    if email.strip() == "":
+                        print(colored("Criação de usuário cancelada...", "yellow"))
+                        time.sleep(1.5)
+                        return 
+                    
+                    phone = input("Celular: ")
+                    if phone.strip() == "":
+                        print(colored("Criação de usuário cancelada...", "yellow"))
+                        time.sleep(1.5)
+                        return 
+                    territories = facade.show_territory_null()
+                    for territorie in territories:
+                        print(f"ID: {territorie.id}, Nome: {territorie.name}, X: {territorie.x}, Y: {territorie.y}")
                 
-                password = pwinput.pwinput(prompt="Senha: ", mask="*")
-                if password.strip() == "":
-                    print(colored("Criação de usuário cancelada...", "yellow"))
-                    time.sleep(1.5)
-                    return 
-                
-                email = input("E-mail: ")
-                if email.strip() == "":
-                    print(colored("Criação de usuário cancelada...", "yellow"))
-                    time.sleep(1.5)
-                    return 
-                
-                phone = input("Celular: ")
-                if phone.strip() == "":
-                    print(colored("Criação de usuário cancelada...", "yellow"))
-                    time.sleep(1.5)
-                    return 
-                
-                territory_id = input("ID do território: ")
-                if territory_id.strip() == "":
-                    print(colored("Criação de usuário cancelada...", "yellow"))
-                    time.sleep(1.5)
-                    return 
-                territory_id_int = int(territory_id)
-                facade.create_user(name, password, email, phone, territory_id_int)
-                print(colored("Usuário criado com sucesso!", "green"))
-                time.sleep(1.5)
+                        territory_id = input("ID do território: ")
+                        if territory_id.strip() == "":
+                            print(colored("Criação de usuário cancelada...", "yellow"))
+                            time.sleep(1.5)
+                            return 
+                        territory_id_int = int(territory_id)
+                        facade.create_user(name, password, email, phone, territory_id_int)
+                        print(colored("Usuário criado com sucesso!", "green"))
+                        time.sleep(1.5)
+                else:
+                    print(colored("Não foi possívei criar o usuário!\nTodos os territórios possuem dono", "red"))
+                    input("\nPressione Enter para continuar...")
 
             elif user_input == 3:
                 clear_screen()
@@ -252,7 +254,7 @@ class AdminUser(UserRole):
                 users = facade.list_users()
                 print("Usuários cadastrados: ")
                 for user in users:
-                    print(f"ID: {user._Person__id}, Nome: {user.name}, E-mail: {user.email}, Celular: {user.celphone}")
+                    print(f"ID: {user.id}, Nome: {user.name}, E-mail: {user.email}, Celular: {user.celphone}")
                 print("Pressione Enter para cancelar...")
                 
                 id_delete = input("\nID do usuário para excluir: ")
