@@ -27,17 +27,45 @@ class SystemFacade:
             self.conn.rollback()
             print(f"Erro ao criar admin: {e}")
             return None
+        
+    def create_territory(self, name: str, x: int, y: int) -> Territory | None:
+        try:
+            if self.admin is not None:
+                territory = self.admin.add_territory(name=name, x=x, y=y, conn=self.conn)
+                return territory
+        except sqlite3.Error as e:
+            self.conn.rollback()
+            print(f"Erro ao criar território: {e}")
+            return None    
+    
+    def update_territory(self, id: int, name: str, x: int, y: int, owner_id: int):
+        territory = self.get_territory_by_id(id)
+        if territory:
+            if name:
+                territory.name = name
+            if x:
+                territory.x = x
+            if y:
+                territory.y = y
+            territory.save(self.conn)
+            
+    def delete_territory(self, id: int):
+        territory = self.get_territory_by_id(id)
+        if territory:
+            territory.delete(self.conn)
+            self.cursor.execute('''
+            DELETE from animals WHERE                    
+            territory_id = ?''', (id,))
 
     def create_user(self, name: str, password: str, email: str, celphone: str, territory_id) -> User | None:
         try:
             if self.admin is not None:
                 user = self.admin.add_user(name=name, password=password, email=email, celphone=celphone, territory=self.get_territory_by_id(territory_id))
                 territorie_associeted = self.get_territory_by_id(territory_id)
-                if territorie_associeted:
-                    territorie_associeted.owner_id = territory_id
-                    territorie_associeted.save(self.conn)
-                
                 UserProxy.save(user, self.conn)
+                if territorie_associeted:
+                    territorie_associeted.owner_id = user.id
+                    territorie_associeted.save(self.conn)
                 return user
         except sqlite3.Error as e:
             self.conn.rollback()
@@ -61,36 +89,13 @@ class SystemFacade:
         user = self.get_user_by_id(id)
         if user:
             UserProxy.delete(user, self.conn)
-            
-    def create_territory(self, name: str, x: int, y: int) -> Territory | None:
-        try:
-            if self.admin is not None:
-                territory = self.admin.add_territory(name=name, x=x, y=y, conn=self.conn)
-                return territory
-        except sqlite3.Error as e:
-            self.conn.rollback()
-            print(f"Erro ao criar território: {e}")
-            return None
-    
-    def update_territory(self, id: int, name: str, x: int, y: int):
-        territory = self.get_territory_by_id(id)
-        if territory:
-            if name:
-                territory.name = name
-            if x:
-                territory.x = x
-            if y:
-                territory.y = y
-            territory.save(self.conn)
-            
-    def delete_territory(self, id: int):
-        territory = self.get_territory_by_id(id)
-        if territory:
-            territory.delete(self.conn)
             self.cursor.execute('''
-            DELETE from animals WHERE                    
-            territory_id = ?''', (id,))
-           
+            UPDATE territories
+            SET owner_id = NULL
+            WHERE owner_id = ?;                 
+            ''', (id,))
+            self.conn.commit()
+            
     def delete_animal(self, id: int):
         self.cursor.execute('''
         DELETE FROM animals WHERE id = ?                    
@@ -155,10 +160,10 @@ class SystemFacade:
         rows = self.cursor.fetchall()
         return [Territory(id=row[0], name=row[1], x=row[2], y=row[3], owner_id=row[4]) for row in rows]
 
-    def show_territory_user(self, territory_id: int, stop_event):
+    def show_territory_user(self, user_id: int, stop_event):
         self.cursor.execute('''SELECT * 
                             FROM territories t 
-                            JOIN users u ON t.id = ?''', (territory_id,))
+                            JOIN users u ON t.id = ?''', (user_id,))
         rows = self.cursor.fetchall()
         for row in rows:
             territory = Territory(id=row[0], name=row[2], x=row[3], y=row[4], owner_id=row[5])

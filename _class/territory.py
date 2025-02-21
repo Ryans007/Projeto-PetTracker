@@ -150,9 +150,9 @@ class Territory():
             else:
                 cursor.execute('''
                             UPDATE territories
-                            SET name = ?, x = ?, y = ?, owner_id = ?
+                            SET id = ?, name = ?, x = ?, y = ?, owner_id = ?
                             WHERE id = ?
-                            ''', (self.name, self.x, self.y, self.id, self.owner_id))
+                            ''', (self.id, self.name, self.x, self.y, self.owner_id, self.id))
             conn.commit()
         finally:
             cursor.close()

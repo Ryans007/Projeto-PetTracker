@@ -197,7 +197,7 @@ class AdminUser(UserRole):
                 users = facade.list_users()
                 print("\nUsuários cadastrados:")
                 for user in users:
-                    print(f"ID: {user._Person__id}, Nome: {user.name}, E-mail: {user.email}, Celular: {user.celphone}")
+                    print(f"ID: {user.id}, Nome: {user.name}, E-mail: {user.email}, Celular: {user.celphone}")
                 input("\nPressione Enter para continuar...")
 
             elif user_input == 2:
