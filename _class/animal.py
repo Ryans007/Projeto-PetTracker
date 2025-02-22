@@ -20,7 +20,15 @@ class Animal():
         self.y = self.tracker.current_location.y
 
         self.conn = None
+        
+    @property
+    def id(self) -> int | None:
+      return self.__id
 
+    @id.setter
+    def id(self, id: int) -> None:
+      self.__id = id 
+      
     @property
     def name(self) -> str:
         return self.__name
@@ -84,7 +92,6 @@ class Animal():
             conn.commit()
         finally:
             cursor.close()
-
         # Inicia o salvamento periódico da localização através do Tracker
         self.tracker.start_location_saving(self.conn, self.__name)
 

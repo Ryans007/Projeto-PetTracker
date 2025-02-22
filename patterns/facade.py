@@ -107,6 +107,8 @@ class SystemFacade:
             if self.admin is not None:
                 animal = self.admin.add_animal(name=name, specie=specie, age=age, territory=self.get_territory_by_id(territory_id), description=description)
                 animal.save(self.conn)
+                animal.tracker.animal_id = animal.id
+                animal.tracker.save(self.conn)
                 return animal      
         except sqlite3.Error as e:
             self.conn.rollback()
@@ -182,6 +184,22 @@ class SystemFacade:
     def get_user_by_email(self, email: str):
         self.cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
         return self.cursor.fetchone()
+
+    def delete_location_history(self):
+        self.cursor.execute("DELETE FROM location")
+        self.conn.commit()  # Certifique-se de que o commit está sendo feito.
+        
+    def create_table_tracker(self):
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS tracker (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            animal_id INTEGER,
+            FOREIGN KEY (animal_id) REFERENCES animal(id)
+            );  
+        ''')
+    
+
+
     
         
         

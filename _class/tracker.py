@@ -14,7 +14,7 @@ class Tracker():
         self._running = False  # Flag para controle da thread de atualização
         self._saving_running = False  # Flag para controle da thread de salvamento
         self.conn = None  # Conexão com o banco de dados (será setada posteriormente)
-        self.animal_name = None  # Nome do animal associado (para salvar na tabela)
+        self.animal_id : int | None = None  # Nome do animal associado (para salvar na tabela)
 
     def location_generate(self) -> Location:
         direction = random.choice(['up', 'down', 'left', 'right'])
@@ -86,5 +86,27 @@ class Tracker():
             self.conn.commit()
         except Exception as e:
             print("Erro ao salvar localização:", e)
+        finally:
+            cursor.close()
+
+
+    def save(self, conn) -> None:
+        cursor = conn.cursor()
+        try:
+            if self.id is None:
+                cursor.execute('''
+                            INSERT INTO tracker (animal_id)
+                            VALUES (?)
+                            ''', 
+                            (self.animal_id,))
+                self.id = cursor.lastrowid
+            else:
+                cursor.execute('''
+                            UPDATE tracker 
+                            SET animal_id = ?
+                            WHERE id = ?
+                            ''', 
+                            (self.animal_id, self.id))
+            conn.commit()
         finally:
             cursor.close()

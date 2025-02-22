@@ -378,4 +378,5 @@ def login_screen(facade):
 if __name__ == "__main__":
     facade = SystemFacade()
     #facade.create_admin("ryan", "ryan@gmail.com", "1234", "9387-5652")
+    facade.create_table_tracker()
     login_screen(facade)

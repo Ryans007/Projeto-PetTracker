@@ -56,16 +56,24 @@ def database_init():
         )
         ''')
         
-        self.cursor.execute('''
-        CREATE TABLE IF NOT EXISTS location(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            animal_name TEXT NOT NULL,
-            x int,
-            y int,
-            time INTEGER,
-            tracker_id INTEGER,
-            FOREIGN KEY (tracker_id) REFERENCES tracker(id)
-        )
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS location (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                animal_name TEXT NOT NULL,
+                x INTEGER,
+                y INTEGER,
+                time INTEGER,
+                tracker_id INTEGER,
+                FOREIGN KEY (tracker_id) REFERENCES tracker(id)
+            );
+        ''')
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS tracker (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                animal_id INTEGER,
+                FOREIGN KEY (animal_id) REFERENCES animal(id)
+            );  
         ''')
 
         conn.commit()
