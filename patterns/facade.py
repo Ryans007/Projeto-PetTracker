@@ -183,3 +183,7 @@ class SystemFacade:
         self.cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
         return self.cursor.fetchone()
     
+        
+        
+        
+    

@@ -55,6 +55,18 @@ def database_init():
             territory_id INTEGER,
         )
         ''')
+        
+        self.cursor.execute('''
+        CREATE TABLE IF NOT EXISTS location(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            animal_name TEXT NOT NULL,
+            x int,
+            y int,
+            time INTEGER,
+            tracker_id INTEGER,
+            FOREIGN KEY (tracker_id) REFERENCES tracker(id)
+        )
+        ''')
 
         conn.commit()
     except Exception as e:
