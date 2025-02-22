@@ -1,20 +1,26 @@
 from _class.tracker import Tracker
 from _class.territory import Territory
-import threading
-import time
-import random
 
 class Animal():
   def __init__(self, name: str, specie: str, age: int, territory: Territory, description: str = "No Description", id: int | None = None) -> None:
-    self.__name = name
-    self.__specie = specie
-    self.__age = age
-    self.__description = description
-    self.territory = territory
-    self.tracker = Tracker(True, territory.x, territory.y)
-    self.__id = id
-    self.x, self.y = self.tracker.location_generate()
-    
+      self.__name = name
+      self.__specie = specie
+      self.__age = age
+      self.__description = description
+      self.territory = territory
+      self.tracker = Tracker(True, territory.x, territory.y)
+      self.__id = id
+      # Inicia a geração contínua de localizações
+      self.tracker.start_location_generation()
+      # Define uma localização inicial
+      self.x = self.tracker.current_location.x
+      self.y = self.tracker.current_location.y
+
+  def update_position(self):
+      """Método para atualizar a posição do animal com base na localização do tracker."""
+      self.x = self.tracker.current_location.x
+      self.y = self.tracker.current_location.y
+          
   @property
   def name(self) -> str:
     return self.__name
@@ -46,7 +52,7 @@ class Animal():
   @description.setter
   def description(self, description) -> None:
     self.__description = description
-  
+      
   def save(self, conn):
       cursor = conn.cursor()
       try:
@@ -81,14 +87,3 @@ class Animal():
       cursor.execute('DELETE FROM animals WHERE id = ?', (self.id,))
       conn.commit()
       self.id = None 
-
-if __name__ == "__main__": pass
-  # territory = Territory("IFPB", 50, 60)
-  # animal = Animal("Rogerio", 1, "Cachorro", 12)
-  # territory.add_animal(animal)
-  
-  # animal_thread = threading.Thread(target=animal.tracker.location_generate, daemon=True)
-  # animal_thread.start()
-  
-  # print(territory.show_territory(13,13))
-  # O restante do programa continua executando normalmente
