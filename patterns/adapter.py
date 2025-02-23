@@ -41,8 +41,8 @@ class CoordinateAdapter:
         x = distance * math.sin(math.radians(azimuth))
         y = distance * math.cos(math.radians(azimuth))
         
-        x = int(abs(x/4))
-        y = int(abs(x/4))
+        x = int(abs(x/2))
+        y = int(abs(x/2))
         
         return x, y
 

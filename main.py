@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from re import A
 import time
 import bcrypt
 import pwinput
@@ -107,15 +108,17 @@ class AdminUser(UserRole):
 
             if user_input == 1:
                 clear_screen()
-                print(f"------------------------------ Territórios ------------------------------")
+                print(f"----------------------------------- Territórios -----------------------------------")
                 territories = facade.list_territories()
                 print("Territórios cadastrados: ")
                 for territory in territories:
                     print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
+
                 territory_id = input("Digite o ID do território que deseja visualizar: ")
                 if territory_id == "":
                     return
                 territory_id = int(territory_id)
+
                 clear_screen()
                 print(f"------------------------------ Opções de Vizualização ------------------------------")
                 print("1 - Vizualização em Tempo Real")
@@ -124,6 +127,7 @@ class AdminUser(UserRole):
                 if user_input == "":
                     return
                 user_input = int(user_input)
+
                 if user_input == 1:
                     stop_event = threading.Event()
                     sim_thread = threading.Thread(target=lambda: facade.show_territory_admin(territory_id, stop_event))
@@ -154,7 +158,7 @@ class AdminUser(UserRole):
                         except ValueError:
                             print("ID inválido! Digite um número.")  
                     else:
-                        print(colored("Nenhum animal castrado no território!", "red"))
+                        print(colored("Nenhum animal cadastrado no território!", "red"))
                         time.sleep(1.5)
             elif user_input == 2:
                 clear_screen()
@@ -424,6 +428,6 @@ def login_screen(facade):
 # Inicialização
 if __name__ == "__main__":
     facade = SystemFacade()
-    facade.create_admin("admin", "admin@gmail.com", "admin", "9387-5652")
+    # facade.create_admin("admin", "admin@admin.com", "admin", "9387-5652")
     # facade.delete_location_history()
     login_screen(facade)

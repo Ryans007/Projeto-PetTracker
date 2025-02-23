@@ -2,13 +2,15 @@ from bearlibterminal import terminal
 import random
 import time
 import textwrap
+from termcolor import colored
+from datetime import datetime
 
 class Territory():
     def __init__(self, name: str, x: int, y: int, owner_id: int| None = None, id: int | None = None) -> None:
         self.__id = id
         self.__name = name
-        self.__x = int(238/4)
-        self.__y = int(133/4)
+        self.__x = x
+        self.__y = y
         self.__owner_id = owner_id
         self.animals = []
     
@@ -67,6 +69,7 @@ class Territory():
         terminal.set(f"window: size={territory_width}x{window_height}, cellsize=auto, title='{self.name}'")
 
         try:
+            print(f"Notificações {self.name}:\n")
             while not stop_event.is_set():
                 terminal.clear()
 
@@ -82,11 +85,20 @@ class Territory():
                     terminal.put(0, y, '#')
                     terminal.put(territory_width - 1, y, '#')
 
-                # 3) Desenha animais
                 for animal in self.animals:
-                    # Se estiver dentro do território
+                    # Verifica se o animal está dentro do território
                     if 1 <= animal.x < territory_width - 1 and 1 <= animal.y < territory_height - 1:
                         terminal.put(animal.x, animal.y, animal.name[0])
+                        # Se ele estava marcado como fora, informa que retornou
+                        if getattr(animal, 'ja_aviso', False):
+                            print(colored(f"{animal.name} retornou ao território. Data: {datetime.fromtimestamp(animal.tracker.last_update).strftime("%d/%m/%Y %H:%M:%S.%f")[:-3]}", "green"))
+                        animal.ja_aviso = False  # Reseta o aviso
+                    else:
+                        # Se o animal está fora e ainda não foi avisado
+                        if not getattr(animal, 'ja_aviso', False):
+                            print(colored(f"{animal.name} está fora do território - X: {animal.x}, Y: {animal.y}, Data: {datetime.fromtimestamp(animal.tracker.last_update).strftime("%d/%m/%Y %H:%M:%S.%f")[:-3]}", "red"))
+                            animal.ja_aviso = True  # Marca como avisado
+
 
                 # 4) Verifica quem está dentro e fora
                 escaped_animals = [
@@ -141,7 +153,7 @@ class Territory():
             cursor.close()
             
     @staticmethod
-    def get_by_id(conn, id: int):
+    def get_by_id(conn, id: int) -> 'Territory':
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM territories WHERE id = ?', (id,))
         row = cursor.fetchone()

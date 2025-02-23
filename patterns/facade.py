@@ -165,13 +165,17 @@ class SystemFacade:
         self.conn.close()
 
     def show_territory_admin(self, territory_id: int, stop_event):
-        territory = self.get_territory_by_id(territory_id)
-        if territory:
-            # Buscar animais associados ao território
-            animals = self.list_animals_in_territory(territory_id)
-            # Limpar animais existentes e adicionar os novos
-            territory.animals = animals
-            territory.show_territory(stop_event)
+        cursor = self.conn.cursor()
+        try:
+            territory = self.get_territory_by_id(territory_id)
+            if territory:
+                # Buscar animais associados ao território
+                animals = self.list_animals_in_territory(territory_id)
+                # Limpar animais existentes e adicionar os novos
+                territory.animals = animals
+                territory.show_territory(stop_event)
+        finally:
+            cursor.close
 
     def show_territory_null(self):
         self.cursor.execute('''SELECT * 
@@ -203,7 +207,7 @@ class SystemFacade:
                             ''', (animal.tracker_id,))
 
         return self.cursor.fetchall()
-
+        
     def get_admin_by_email(self, email: str):
         self.cursor.execute("SELECT * FROM admins WHERE email = ?", (email,))
         return self.cursor.fetchone()

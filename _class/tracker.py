@@ -2,12 +2,15 @@ import random
 import time
 import threading
 from _class.location import Location
+from termcolor import colored
 
 class Tracker():
     def __init__(self, state: bool, x_limit: int, y_limit: int, id: int | None = None) -> None:
         self.id = id
         self.state = state
         self.last_update = None
+        self.x_limit = x_limit
+        self.y_limit = y_limit
         self.x = random.randint(1, x_limit - 2)  # Posição inicial aleatória
         self.y = random.randint(1, y_limit - 2)
         self.current_location = Location(self.x, self.y)  # Armazena a localização atual
@@ -63,12 +66,11 @@ class Tracker():
         """Loop que salva a localização a cada 60 segundos."""
         while self._saving_running:
             self.last_update = time.time()
-            if self.x < 0 or self.y < 0: 
+            if not (1 <= self.current_location.x < self.x_limit - 1 and 1 <= self.current_location.y < self.y_limit - 1):
                 self.location_save()
-                time.sleep(5)
             else:
                 self.location_save()
-                time.sleep(60)
+                time.sleep(30)
 
     def stop_location_saving(self):
         """Para a thread de salvamento de localização."""
