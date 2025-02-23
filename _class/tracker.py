@@ -64,7 +64,7 @@ class Tracker():
         while self._saving_running:
             self.last_update = time.time()
             self.location_save()
-            time.sleep(60)
+            time.sleep(5)
 
     def stop_location_saving(self):
         """Para a thread de salvamento de localização."""
@@ -81,14 +81,13 @@ class Tracker():
             cursor.execute(
                 '''INSERT INTO location (animal_name, x, y, time, tracker_id)
                    VALUES (?, ?, ?, ?, ?)''',
-                (self.animal_name, self.current_location.x, self.current_location.y, self.last_update, self.animal_id)
+                (self.animal_name, self.current_location.x, self.current_location.y, self.last_update, self.id)
             )
             self.conn.commit()
         except Exception as e:
             print("Erro ao salvar localização:", e)
         finally:
             cursor.close()
-
 
     def save(self, conn) -> None:
         cursor = conn.cursor()
@@ -110,3 +109,5 @@ class Tracker():
             conn.commit()
         finally:
             cursor.close()
+            
+

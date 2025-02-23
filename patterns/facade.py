@@ -115,6 +115,7 @@ class SystemFacade:
                 animal.save(self.conn)
                 animal.tracker.animal_id = animal.id
                 animal.tracker.save(self.conn)
+                animal.save(self.conn)
                 return animal      
         except sqlite3.Error as e:
             self.conn.rollback()
@@ -184,12 +185,12 @@ class SystemFacade:
                 else:
                     raise Exception("Erro ao buscar território: ID inexistente!!!")
          
-    def show_location_history(self, tracker_id: int):
-        animal = Animal.get_by_id(self.conn, tracker_id)
+    def show_location_history(self, animal_id: int):
+        animal = Animal.get_by_id(self.conn, animal_id)
         
         self.cursor.execute('''SELECT * FROM location
                             where tracker_id = ?  
-                            ''', (animal.id,))
+                            ''', (animal.tracker_id,))
         
         return self.cursor.fetchall()
         

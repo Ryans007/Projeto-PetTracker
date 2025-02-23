@@ -1,4 +1,5 @@
 from webbrowser import get
+from _class import tracker
 from _class.tracker import Tracker
 from _class.territory import Territory
 import threading
@@ -19,6 +20,7 @@ class Animal():
         # Define a localização inicial com base no tracker
         self.x = self.tracker.current_location.x
         self.y = self.tracker.current_location.y
+        self.tracker_id = self.tracker.id
 
         self.conn = None
         
@@ -78,17 +80,17 @@ class Animal():
         try:
             if self.__id is None:
                 cursor.execute(
-                    '''INSERT INTO animals (name, specie, age, description, territory_id)
-                       VALUES(?, ?, ?, ?, ?)''',
-                    (self.name, self.specie, self.age, self.description, self.territory.id)
+                    '''INSERT INTO animals (name, specie, age, description, territory_id, tracker_id)
+                       VALUES(?, ?, ?, ?, ?, ?)''',
+                    (self.name, self.specie, self.age, self.description, self.territory.id, self.tracker.id)
                 )
                 self.__id = cursor.lastrowid
             else:
                 cursor.execute(
                     '''UPDATE animals
-                       SET name = ?, specie = ?, age = ?, description = ?, territory_id = ?
+                       SET name = ?, specie = ?, age = ?, description = ?, territory_id = ?, tracker_id = ?
                        WHERE id = ?''',
-                    (self.name, self.specie, self.age, self.description, self.territory.id, self.__id)
+                    (self.name, self.specie, self.age, self.description, self.territory.id, self.tracker.id, self.id)
                 )
             conn.commit()
         finally:
@@ -102,7 +104,9 @@ class Animal():
         cursor.execute('SELECT * FROM animals WHERE id = ?', (id,))
         row = cursor.fetchone()
         if row:
-            return Animal(id=row[0], name=row[1], specie=row[2], age=row[3], territory=Territory.get_by_id(conn,row[5]), description=row[5])
+            animal = Animal(id=row[0], name=row[1], specie=row[2], age=row[3], description=row[4], territory=Territory.get_by_id(conn,row[5]))
+            animal.tracker_id = row[6]
+            return animal
         raise Exception("Nenhum animal corresponde ao id")
 
     def delete(self, conn):
