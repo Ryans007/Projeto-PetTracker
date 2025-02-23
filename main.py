@@ -113,13 +113,18 @@ class AdminUser(UserRole):
                 print("Territórios cadastrados: ")
                 for territory in territories:
                     print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
-                territory_id = int(input("Digite o ID do território que deseja visualizar: "))
-                    # Cria o evento de parada e inicia a thread da simulação
+                territory_id = input("Digite o ID do território que deseja visualizar: ")
+                if territory_id == "":
+                    return
+                territory_id = int(territory_id)
                 clear_screen()
                 print(f"------------------------------ Opções de Vizualização ------------------------------")
-                print("1 - Vizualizar Coordenadas Atuais")
+                print("1 - Vizualização em Tempo Real")
                 print("2 - Vizualizar Histórico")
-                user_input = int(input("Escolha sua opção: "))
+                user_input = input("Escolha sua opção: ")
+                if user_input == "":
+                    return
+                user_input = int(user_input)
                 if user_input == 1:
                     stop_event = threading.Event()
                     sim_thread = threading.Thread(target=lambda: facade.show_territory_admin(territory_id, stop_event))
@@ -132,21 +137,26 @@ class AdminUser(UserRole):
                     sim_thread.join()
                 if user_input == 2:
                     clear_screen()
-                    print(f"------------------------------ Territórios ------------------------------")
+                    print(f"------------------------------ Histórico Territórios ------------------------------")
                     animals = facade.list_animals_in_territory(territory_id)
-                    print("\nSelecione o animal que você deseja vizualizar o histórico.")
-                    print("Animais cadastrados: ")
-                    for animal in animals:
-                        print(f"ID: {animal.id}, Nome: {animal.name}")
-                    try:
-                        animal_id = int(input("Digite o ID do animal que você deseja vizualizar o histórico: "))
-                        locations = facade.show_location_history(animal_id)
-                        for location in locations:
-                            print(f"Nome: {location[1]}, x: {location[2]}, y: {location[3]}, horario: {datetime.fromtimestamp(location[4]).strftime("%d/%m/%Y %H:%M:%S.%f")[:-3]}")
-                        input("\nPressione Enter para continuar...")
-                    except ValueError:
-                        print("ID inválido! Digite um número.")  
-
+                    print("Animais cadastrados:")
+                    if animals:
+                        for animal in animals:
+                            print(f"ID: {animal.id}, Nome: {animal.name}")
+                        try:
+                            animal_id = input("Digite o ID do animal que você deseja vizualizar o histórico: ")
+                            if animal_id == "":
+                                return
+                            animal_id = int(animal_id)
+                            locations = facade.show_location_history(animal_id)
+                            for location in locations:
+                                print(f"Nome: {location[1]}, x: {location[2]}, y: {location[3]}, horario: {datetime.fromtimestamp(location[4]).strftime("%d/%m/%Y %H:%M:%S.%f")[:-3]}")
+                            input("\nPressione Enter para continuar...")
+                        except ValueError:
+                            print("ID inválido! Digite um número.")  
+                    else:
+                        print(colored("Nenhum animal castrado no território!", "red"))
+                        time.sleep(1.5)
             elif user_input == 2:
                 clear_screen()
                 print(f"------------------------------ Novo Território ------------------------------")
@@ -322,10 +332,13 @@ class AdminUser(UserRole):
             if user_input == 1:
                 animals = facade.list_animais()
                 print("\nAnimais cadastrados:")
-                for animal in animals:
-                    print(f"ID: {animal[0]}, Nome: {animal[1]}, Espécie: {animal[2]}, Idade: {animal[3]}")
-                input("\nPressione Enter para continuar...")
-
+                if animals:
+                    for animal in animals:
+                        print(f"ID: {animal[0]}, Nome: {animal[1]}, Espécie: {animal[2]}, Idade: {animal[3]}")
+                    input("\nPressione Enter para continuar...")
+                else:
+                    print(colored("Nenhum animal castrado no território!", "red"))
+                    
             elif user_input == 2:
                 clear_screen()
                 print(f"------------------------------ Novo Animal ------------------------------")
@@ -361,24 +374,26 @@ class AdminUser(UserRole):
 
             elif user_input == 3:
                 clear_screen()
-                print(f"------------------------------ Excluir Animal ------------------------------")
+                print(f"-----------------------------------------Excluir Território--------------------------------------------------")
                 animals = facade.list_animais()
-                print("Usuários cadastrados: ")
-                for animal in animals:
-                     print(f"ID: {animal[0]}, Nome: {animal[1]}, Espécie: {animal[2]}, Idade: {animal[3]}, Descrição: {animal[4]}, ID território: {animal[5]},ID rastreador: {animal[6]}")
-                print("Pressione Enter para cancelar...")
-                
-                id_delete = input("\nID do animal para excluir: ")
-                if id_delete.strip() == "":
-                    print(colored("Criação do animal cancelada...", "yellow"))
+                print("Animais cadastrados:")
+                if animals:
+                    for animal in animals:
+                        print(f"ID: {animal[0]}, Nome: {animal[1]}, Espécie: {animal[2]}, Idade: {animal[3]}, Descrição: {animal[4]}, ID território: {animal[5]},ID rastreador: {animal[6]}")
+                    print("Pressione Enter para cancelar...\n")
+                    id_delete = input("ID do animal para excluir: ")
+                    if id_delete.strip() == "":
+                        print(colored("Criação do animal cancelada...", "yellow"))
+                        time.sleep(1.5)
+                        return 
+                    
+                    id_delete_int = int(id_delete)
+                    facade.delete_animal(id_delete_int)
+                    print(colored("Animal excluído com sucesso!", "green"))
                     time.sleep(1.5)
-                    return 
-                
-                id_delete_int = int(id_delete)
-                facade.delete_animal(id_delete_int)
-                print(colored("Animal excluído com sucesso!", "green"))
-                time.sleep(1.5)
-
+                else:
+                    print(colored("Nenhum animal para excluir!", "red"))
+                    time.sleep(1.5)
             elif user_input == 4:
                 return
 
