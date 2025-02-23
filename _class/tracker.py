@@ -68,9 +68,10 @@ class Tracker():
             self.last_update = time.time()
             if not (1 <= self.current_location.x < self.x_limit - 1 and 1 <= self.current_location.y < self.y_limit - 1):
                 self.location_save()
+                time.sleep(5)
             else:
                 self.location_save()
-                time.sleep(30)
+                time.sleep(60)
 
     def stop_location_saving(self):
         """Para a thread de salvamento de localização."""

@@ -161,6 +161,17 @@ class SystemFacade:
             animals.append(animal)
         return animals
 
+    def list_animals_in_territory_user(self, user_id: int):
+        user = self.get_user_by_id(user_id)
+        self.cursor.execute('SELECT * FROM animals WHERE territory_id = ?', (user.territory,))
+        rows = self.cursor.fetchall()
+        animals = []
+        for row in rows:
+            territory = self.get_territory_by_id(row[5])  # Supondo que territory_id está na posição 5
+            animal = Animal(id=row[0], name=row[1], specie=row[2], age=row[3], territory=territory, description=row[4])
+            animals.append(animal)
+        return animals
+
     def close_connection(self):
         self.conn.close()
 

@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from re import A
 import time
 import bcrypt
 import pwinput
@@ -26,9 +25,8 @@ class RegularUser(UserRole):
             clear_screen()
             print("\n------------------------------ Menu do Usuário ------------------------------")
             print("1 - Visualizar Território")
-            print("2 - Voltar ao Menu Principal")
-            print("3 - Deslogar")
-            print("4 - Encerrar Programa")
+            print("2 - Deslogar")
+            print("3 - Encerrar Programa")
 
             try:
                 user_input = int(input("Escolha sua opção: "))
@@ -38,21 +36,48 @@ class RegularUser(UserRole):
 
             if user_input == 1:
                 clear_screen()
-                # Cria o evento de parada e inicia a thread da simulação
-                stop_event = threading.Event()
-                sim_thread = threading.Thread(target=lambda: facade.show_territory_user(self.user_id, stop_event))
-                sim_thread.start()
-                print("\nA simulação do território foi iniciada em uma nova janela.")
-                print("Para voltar ao menu, volte ao terminal do menu e pressione Enter.")
-                input() # Aguarda o usuário pressionar Enter no terminal principal
-                # Sinaliza para a simulação encerrar e aguarda a thread terminar
-                stop_event.set()
-                sim_thread.join()
+                print(f"------------------------------ Opções de Vizualização ------------------------------")
+                print("1 - Vizualização em Tempo Real")
+                print("2 - Vizualizar Histórico")
+                user_input = input("Escolha sua opção: ")
+                if user_input == "":
+                    return
+                user_input = int(user_input)
+                if user_input == 1:
+                    stop_event = threading.Event()
+                    sim_thread = threading.Thread(target=lambda: facade.show_territory_user(self.user_id, stop_event))
+                    sim_thread.start()
+                    print("\nA simulação do território foi iniciada em uma nova janela.")
+                    print("Para voltar ao menu, volte ao terminal do menu e pressione Enter.")
+                    input() # Aguarda o usuário pressionar Enter no terminal principal
+                    # Sinaliza para a simulação encerrar e aguarda a thread terminar
+                    stop_event.set()
+                    sim_thread.join()
+                if user_input == 2:
+                    clear_screen()
+                    print(f"------------------------------ Histórico Territórios ------------------------------")
+                    animals = facade.list_animals_in_territory_user(self.user_id)
+                    print("Animais cadastrados:")
+                    if animals:
+                        for animal in animals:
+                            print(f"ID: {animal.id}, Nome: {animal.name}")
+                        try:
+                            animal_id = input("Digite o ID do animal que você deseja vizualizar o histórico: ")
+                            if animal_id == "":
+                                return
+                            animal_id = int(animal_id)
+                            locations = facade.show_location_history(animal_id)
+                            for location in locations:
+                                print(f"Nome: {location[1]}, x: {location[2]}, y: {location[3]}, horario: {datetime.fromtimestamp(location[4]).strftime("%d/%m/%Y %H:%M:%S.%f")[:-3]}")
+                            input("\nPressione Enter para continuar...")
+                        except ValueError:
+                            print("ID inválido! Digite um número.")  
+                    else:
+                        print(colored("Nenhum animal cadastrado no território!", "red"))
+                        time.sleep(1.5)
             elif user_input == 2:
-                return  # Volta ao menu principal
-            elif user_input == 3:
                 login_screen(facade)
-            elif user_input == 4:
+            elif user_input == 3:
                 print("Encerrando o programa...")
                 facade.close_connection()
                 exit()
@@ -123,6 +148,7 @@ class AdminUser(UserRole):
                 print(f"------------------------------ Opções de Vizualização ------------------------------")
                 print("1 - Vizualização em Tempo Real")
                 print("2 - Vizualizar Histórico")
+                print("3 - Deletar Histórico")
                 user_input = input("Escolha sua opção: ")
                 if user_input == "":
                     return
@@ -138,7 +164,7 @@ class AdminUser(UserRole):
                     # Sinaliza para a simulação encerrar e aguarda a thread terminar
                     stop_event.set()
                     sim_thread.join()
-                if user_input == 2:
+                elif user_input == 2:
                     clear_screen()
                     print(f"------------------------------ Histórico Territórios ------------------------------")
                     animals = facade.list_animals_in_territory(territory_id)
@@ -160,6 +186,10 @@ class AdminUser(UserRole):
                     else:
                         print(colored("Nenhum animal cadastrado no território!", "red"))
                         time.sleep(1.5)
+                elif user_input == 3:
+                    facade.delete_location_history()
+                    print(colored("Histórico deletado com sucesso!", "green"))
+                    time.sleep(1.5)        
             elif user_input == 2:
                 clear_screen()
                 print(f"------------------------------ Novo Território ------------------------------")
@@ -388,8 +418,7 @@ class AdminUser(UserRole):
                     if id_delete.strip() == "":
                         print(colored("Criação do animal cancelada...", "yellow"))
                         time.sleep(1.5)
-                        return 
-                    
+                        return                    
                     id_delete_int = int(id_delete)
                     facade.delete_animal(id_delete_int)
                     print(colored("Animal excluído com sucesso!", "green"))
