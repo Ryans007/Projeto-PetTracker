@@ -113,39 +113,39 @@ class AdminUser(UserRole):
                 print("Territórios cadastrados: ")
                 for territory in territories:
                     print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
-                    territory_id = int(input("Digite o ID do território que deseja visualizar: "))
+                territory_id = int(input("Digite o ID do território que deseja visualizar: "))
                     # Cria o evento de parada e inicia a thread da simulação
+                clear_screen()
+                print(f"------------------------------ Opções de Vizualização ------------------------------")
+                print("1 - Vizualizar Coordenadas Atuais")
+                print("2 - Vizualizar Histórico")
+                user_input = int(input("Escolha sua opção: "))
+                if user_input == 1:
+                    stop_event = threading.Event()
+                    sim_thread = threading.Thread(target=lambda: facade.show_territory_admin(territory_id, stop_event))
+                    sim_thread.start()
+                    print("\nA simulação do território foi iniciada em uma nova janela.")
+                    print("Para voltar ao menu, volte ao terminal do menu e pressione Enter.")
+                    input() # Aguarda o usuário pressionar Enter no terminal principal
+                    # Sinaliza para a simulação encerrar e aguarda a thread terminar
+                    stop_event.set()
+                    sim_thread.join()
+                if user_input == 2:
                     clear_screen()
-                    print(f"------------------------------ Opções de Vizualização ------------------------------")
-                    print("1 - Vizualizar Coordenadas Atuais")
-                    print("2 - Vizualizar Histórico")
-                    user_input = int(input("Escolha sua opção: "))
-                    if user_input == 1:
-                        stop_event = threading.Event()
-                        sim_thread = threading.Thread(target=lambda: facade.show_territory_admin(territory_id, stop_event))
-                        sim_thread.start()
-                        print("\nA simulação do território foi iniciada em uma nova janela.")
-                        print("Para voltar ao menu, volte ao terminal do menu e pressione Enter.")
-                        input() # Aguarda o usuário pressionar Enter no terminal principal
-                        # Sinaliza para a simulação encerrar e aguarda a thread terminar
-                        stop_event.set()
-                        sim_thread.join()
-                    if user_input == 2:
-                        clear_screen()
-                        print(f"------------------------------ Territórios ------------------------------")
-                        animals = facade.list_animals_in_territory(territory_id)
-                        print("\nSelecione o animal que você deseja vizualizar o histórico.")
-                        print("Animais cadastrados: ")
-                        for animal in animals:
-                            print(f"ID: {animal.id}, Nome: {animal.name}")
-                        try:
-                            animal_id = int(input("Digite o ID do animal que você deseja vizualizar o histórico: "))
-                            locations = facade.show_location_history(animal_id)
-                            for location in locations:
-                                print(f"Nome: {location[1]}, x: {location[2]}, y: {location[3]}, horario: {datetime.fromtimestamp(location[4]).strftime("%d/%m/%Y %H:%M:%S.%f")[:-3]}")
-                            input("\nPressione Enter para continuar...")
-                        except ValueError:
-                            print("ID inválido! Digite um número.")  
+                    print(f"------------------------------ Territórios ------------------------------")
+                    animals = facade.list_animals_in_territory(territory_id)
+                    print("\nSelecione o animal que você deseja vizualizar o histórico.")
+                    print("Animais cadastrados: ")
+                    for animal in animals:
+                        print(f"ID: {animal.id}, Nome: {animal.name}")
+                    try:
+                        animal_id = int(input("Digite o ID do animal que você deseja vizualizar o histórico: "))
+                        locations = facade.show_location_history(animal_id)
+                        for location in locations:
+                            print(f"Nome: {location[1]}, x: {location[2]}, y: {location[3]}, horario: {datetime.fromtimestamp(location[4]).strftime("%d/%m/%Y %H:%M:%S.%f")[:-3]}")
+                        input("\nPressione Enter para continuar...")
+                    except ValueError:
+                        print("ID inválido! Digite um número.")  
 
             elif user_input == 2:
                 clear_screen()
@@ -157,21 +157,35 @@ class AdminUser(UserRole):
                     print(colored("Criação de território cancelada...", "yellow"))
                     time.sleep(1.5)
                     return 
-                x = input("Coordenada X: ")
-                if x.strip() == "":
+                lat1 = input("Primeira Latitude: ")
+                if lat1.strip() == "":
                     print(colored("Criação de território cancelada...", "yellow"))
                     time.sleep(1.5)
                     return 
-                x_int = int(x)
+                lat1_float = float(lat1)
                 
-                y = input("Coordenada Y: ")
-                if y.strip() == "":
+                long1 = input("Primeira Longitude: ")
+                if long1.strip() == "":
                     print(colored("Criação de território cancelada...", "yellow"))
                     time.sleep(1.5)
                     return 
-                y_int = int(y)
+                long1_float = float(long1)
+            
+                lat2 = input("Segunda Latitude: ")
+                if lat2.strip() == "":
+                    print(colored("Criação de território cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                lat2_float = float(lat2)
                 
-                facade.create_territory(name, x_int, y_int)
+                long2 = input("Segunda Longitude: ")
+                if long2.strip() == "":
+                    print(colored("Criação de território cancelada...", "yellow"))
+                    time.sleep(1.5)
+                    return 
+                long2_float = float(long2)
+                
+                facade.create_territory(name, lat1_float, long1_float, lat2_float, long2_float)
                 print(colored("Território criado com sucesso!", "green"))
                 time.sleep(1.5)
 
@@ -254,16 +268,15 @@ class AdminUser(UserRole):
                     territories = facade.show_territory_null()
                     for territorie in territories:
                         print(f"ID: {territorie.id}, Nome: {territorie.name}, X: {territorie.x}, Y: {territorie.y}")
-                
-                        territory_id = input("ID do território: ")
-                        if territory_id.strip() == "":
-                            print(colored("Criação de usuário cancelada...", "yellow"))
-                            time.sleep(1.5)
-                            return 
-                        territory_id_int = int(territory_id)
-                        facade.create_user(name, password, email, phone, territory_id_int)
-                        print(colored("Usuário criado com sucesso!", "green"))
+                    territory_id = input("ID do território: ")
+                    if territory_id.strip() == "":
+                        print(colored("Criação de usuário cancelada...", "yellow"))
                         time.sleep(1.5)
+                        return 
+                    territory_id_int = int(territory_id)
+                    facade.create_user(name, password, email, phone, territory_id_int)
+                    print(colored("Usuário criado com sucesso!", "green"))
+                    time.sleep(1.5)
                 else:
                     print(colored("Não foi possívei criar o usuário!\nTodos os territórios possuem dono", "red"))
                     input("\nPressione Enter para continuar...")

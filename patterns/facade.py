@@ -4,6 +4,7 @@ from _class.animal import Animal
 from _class.person import Admin, User
 from database.database import Database
 from patterns.proxy import TerritoryProxy, UserProxy
+from patterns.adapter import CoordinateAdapter
 import sqlite3
 
 class SystemFacade:
@@ -37,9 +38,11 @@ class SystemFacade:
             print(f"Erro ao criar admin: {e}")
             return None
 
-    def create_territory(self, name: str, x: int, y: int) -> Territory | None:
+    def create_territory(self, name: str, lat1: float, long1: float, lat2: float, long2: float) -> Territory | None:
         try:
             if self.admin is not None:
+                adapter = CoordinateAdapter(lat1,long1, lat2, long2)
+                x, y = adapter.get_coordinates()      
                 territory = self.admin.add_territory(name=name, x=x, y=y, conn=self.conn)
                 return territory
         except sqlite3.Error as e:
