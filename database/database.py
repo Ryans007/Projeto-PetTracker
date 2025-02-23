@@ -1,13 +1,27 @@
-# type: ignore
 import sqlite3
 import os
 
-def database_init():
-    try:
+class Database:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(Database, cls).__new__(cls)
+            cls._instance._initialize()
+        return cls._instance
+
+    def _initialize(self):
         script_dir = os.path.dirname(__file__)
         db_path = os.path.join(script_dir, 'pettracker.db')
-        conn = sqlite3.connect("pettracker.db")
-        cursor = conn.cursor()
+        self.db_path = db_path
+        self.conn = self._create_connection()
+        self._create_tables()
+
+    def _create_connection(self):
+        return sqlite3.connect(self.db_path, check_same_thread=False)
+
+    def _create_tables(self):
+        cursor = self.conn.cursor()
 
         # tabela de admins
         cursor.execute('''
@@ -19,7 +33,7 @@ def database_init():
             celphone TEXT NOT NULL
         )
         ''')
-        
+
         # tabela de usuários
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
@@ -31,7 +45,7 @@ def database_init():
             territory_id INTEGER
         )
         ''')
-        
+
         # tabela de territorios
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS territories (
@@ -39,12 +53,11 @@ def database_init():
             name TEXT NOT NULL,
             x INTEGER NOT NULL,
             y INTEGER NOT NULL,
-                       
             owner_id INT
         )
         ''')
 
-        #tabela de animais
+        # tabela de animais
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS animals (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,36 +66,43 @@ def database_init():
             age INTEGER NOT NULL,
             description TEXT,
             territory_id INTEGER,
+            tracker_id INTEGER
         )
         ''')
-        
+
+        # tabela de localização
         cursor.execute('''
-            CREATE TABLE IF NOT EXISTS location (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                animal_name TEXT NOT NULL,
-                x INTEGER,
-                y INTEGER,
-                time INTEGER,
-                tracker_id INTEGER,
-                FOREIGN KEY (tracker_id) REFERENCES tracker(id)
-            );
-        ''')
-        
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS tracker (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                animal_id INTEGER,
-                FOREIGN KEY (animal_id) REFERENCES animal(id)
-            );  
+        CREATE TABLE IF NOT EXISTS location (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            animal_name TEXT NOT NULL,
+            x INTEGER,
+            y INTEGER,
+            time INTEGER,
+            tracker_id INTEGER,
+            FOREIGN KEY (tracker_id) REFERENCES tracker(id)
+        );
         ''')
 
-        conn.commit()
-    except Exception as e:
-        print(f"Erro ao criar o banco de dados: {e}")
-        conn.close()
-    finally:
-        if conn:
-            conn.close()
+        # tabela de rastreadores
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS tracker (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            animal_id INTEGER,
+            FOREIGN KEY (animal_id) REFERENCES animals(id)
+        );
+        ''')
 
+        self.conn.commit()
+
+    def get_connection(self):
+        return self._create_connection()
+
+    def close_connection(self):
+        if self.conn:
+            self.conn.close()
+            self._instance = None
+
+# Inicialização do banco de dados
 if __name__ == "__main__":
-    database_init()
+    db = Database()
+    db.get_connection()

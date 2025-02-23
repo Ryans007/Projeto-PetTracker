@@ -37,6 +37,7 @@ Tarefas a fazer:
 3 - builder ✅ (Da pra implementa-lo mais vezes)
 4 - proxy ✅
 5 - template_method ✅
+6 - singleton ✅
 
 Tarefas feitas:
 1 - Registro de Animal

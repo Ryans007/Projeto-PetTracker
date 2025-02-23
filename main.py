@@ -397,6 +397,6 @@ def login_screen(facade):
 # Inicialização
 if __name__ == "__main__":
     facade = SystemFacade()
-    #facade.create_admin("ryan", "ryan@gmail.com", "1234", "9387-5652")
+    facade.create_admin("admin", "admin@gmail.com", "admin", "9387-5652")
     # facade.delete_location_history()
     login_screen(facade)

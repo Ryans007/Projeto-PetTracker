@@ -63,8 +63,12 @@ class Tracker():
         """Loop que salva a localização a cada 60 segundos."""
         while self._saving_running:
             self.last_update = time.time()
-            self.location_save()
-            time.sleep(5)
+            if self.x < 0 or self.y < 0: 
+                self.location_save()
+                time.sleep(5)
+            else:
+                self.location_save()
+                time.sleep(60)
 
     def stop_location_saving(self):
         """Para a thread de salvamento de localização."""
