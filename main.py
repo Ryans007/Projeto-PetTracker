@@ -8,6 +8,7 @@ from patterns.facade import SystemFacade
 from utils import clear_screen
 from _class.person import Admin
 import threading
+from datetime import datetime
 
 # Classe abstrata para os papéis dos usuários
 class UserRole(ABC):
@@ -112,20 +113,39 @@ class AdminUser(UserRole):
                 print("Territórios cadastrados: ")
                 for territory in territories:
                     print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
-                try:
                     territory_id = int(input("Digite o ID do território que deseja visualizar: "))
                     # Cria o evento de parada e inicia a thread da simulação
-                    stop_event = threading.Event()
-                    sim_thread = threading.Thread(target=lambda: facade.show_territory_admin(territory_id, stop_event))
-                    sim_thread.start()
-                    print("\nA simulação do território foi iniciada em uma nova janela.")
-                    print("Para voltar ao menu, volte ao terminal do menu e pressione Enter.")
-                    input() # Aguarda o usuário pressionar Enter no terminal principal
-                    # Sinaliza para a simulação encerrar e aguarda a thread terminar
-                    stop_event.set()
-                    sim_thread.join()
-                except ValueError:
-                    print("ID inválido! Digite um número.")  
+                    clear_screen()
+                    print(f"------------------------------ Opções de Vizualização ------------------------------")
+                    print("1 - Vizualizar Coordenadas Atuais")
+                    print("2 - Vizualizar Histórico")
+                    user_input = int(input("Escolha sua opção: "))
+                    if user_input == 1:
+                        stop_event = threading.Event()
+                        sim_thread = threading.Thread(target=lambda: facade.show_territory_admin(territory_id, stop_event))
+                        sim_thread.start()
+                        print("\nA simulação do território foi iniciada em uma nova janela.")
+                        print("Para voltar ao menu, volte ao terminal do menu e pressione Enter.")
+                        input() # Aguarda o usuário pressionar Enter no terminal principal
+                        # Sinaliza para a simulação encerrar e aguarda a thread terminar
+                        stop_event.set()
+                        sim_thread.join()
+                    if user_input == 2:
+                        clear_screen()
+                        print(f"------------------------------ Territórios ------------------------------")
+                        animals = facade.list_animals_in_territory(territory_id)
+                        print("\nSelecione o animal que você deseja vizualizar o histórico.")
+                        print("Animais cadastrados: ")
+                        for animal in animals:
+                            print(f"ID: {animal.id}, Nome: {animal.name}")
+                        try:
+                            animal_id = int(input("Digite o ID do animal que você deseja vizualizar o histórico: "))
+                            locations = facade.show_location_history(animal_id)
+                            for location in locations:
+                                print(f"Nome: {location[1]}, x: {location[2]}, y: {location[3]}, horario: {datetime.fromtimestamp(location[4]).strftime("%d/%m/%Y %H:%M:%S.%f")[:-3]}")
+                            input("\nPressione Enter para continuar...")
+                        except ValueError:
+                            print("ID inválido! Digite um número.")  
 
             elif user_input == 2:
                 clear_screen()
@@ -353,7 +373,7 @@ class AdminUser(UserRole):
 def login_screen(facade):
     while True:
         clear_screen()
-        print("\n------------------------------ Fazer Login ------------------------------")
+        print("------------------------------ Fazer Login ------------------------------")
         email = input("Digite seu e-mail: ")
         senha = pwinput.pwinput(prompt="Digite sua senha: ", mask="*")
 
@@ -378,5 +398,5 @@ def login_screen(facade):
 if __name__ == "__main__":
     facade = SystemFacade()
     #facade.create_admin("ryan", "ryan@gmail.com", "1234", "9387-5652")
-    facade.create_table_tracker()
+    #facade.delete_location_history()
     login_screen(facade)

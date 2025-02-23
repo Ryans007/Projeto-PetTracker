@@ -120,8 +120,7 @@ class Territory():
             pass
         finally:
             terminal.close()
-
-
+        
     def save(self, conn):
         cursor = conn.cursor()
         try:
@@ -140,6 +139,7 @@ class Territory():
             conn.commit()
         finally:
             cursor.close()
+            
     @staticmethod
     def get_by_id(conn, id: int):
         cursor = conn.cursor()

@@ -81,7 +81,7 @@ class Tracker():
             cursor.execute(
                 '''INSERT INTO location (animal_name, x, y, time, tracker_id)
                    VALUES (?, ?, ?, ?, ?)''',
-                (self.animal_name, self.current_location.x, self.current_location.y, self.last_update, self.id)
+                (self.animal_name, self.current_location.x, self.current_location.y, self.last_update, self.animal_id)
             )
             self.conn.commit()
         except Exception as e:

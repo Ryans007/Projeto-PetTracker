@@ -1,3 +1,4 @@
+from _class import territory, tracker
 from _class.territory import Territory
 from _class.animal import Animal
 from _class.person import Admin, User
@@ -102,6 +103,11 @@ class SystemFacade:
         ''', (id,))
         self.conn.commit()
         
+        self.cursor.execute('''
+        DELETE from tracker WHERE                    
+        animal_id = ?''', (id,))
+        self.conn.commit()
+        
     def add_animal_to_territory(self, name: str, specie: str, age: int, territory_id: int, description="No Description"):
         try:
             if self.admin is not None:
@@ -155,6 +161,7 @@ class SystemFacade:
             territory.animals = animals
             territory.show_territory(stop_event)
             
+
     def show_territory_null(self):
         self.cursor.execute('''SELECT * 
                             FROM territories WHERE owner_id IS NULL
@@ -177,6 +184,15 @@ class SystemFacade:
                 else:
                     raise Exception("Erro ao buscar território: ID inexistente!!!")
          
+    def show_location_history(self, tracker_id: int):
+        animal = Animal.get_by_id(self.conn, tracker_id)
+        
+        self.cursor.execute('''SELECT * FROM location
+                            where tracker_id = ?  
+                            ''', (animal.id,))
+        
+        return self.cursor.fetchall()
+        
     def get_admin_by_email(self, email: str):
         self.cursor.execute("SELECT * FROM admins WHERE email = ?", (email,))
         return self.cursor.fetchone()
@@ -189,14 +205,6 @@ class SystemFacade:
         self.cursor.execute("DELETE FROM location")
         self.conn.commit()  # Certifique-se de que o commit está sendo feito.
         
-    def create_table_tracker(self):
-        self.cursor.execute('''
-            CREATE TABLE IF NOT EXISTS tracker (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            animal_id INTEGER,
-            FOREIGN KEY (animal_id) REFERENCES animal(id)
-            );  
-        ''')
     
 
 
