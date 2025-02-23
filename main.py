@@ -3,7 +3,6 @@ import time
 import bcrypt
 import pwinput
 from termcolor import colored
-from _class import territory
 from patterns.facade import SystemFacade
 from utils import clear_screen
 from _class.person import Admin

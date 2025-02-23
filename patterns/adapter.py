@@ -52,8 +52,3 @@ class CoordinateAdapter:
         """
         return self.x, self.y
 
-# Exemplo de uso:
-adapter = CoordinateAdapter(-23.550520, -46.633308, -23.551000, -46.634000)
-x, y = adapter.get_coordinates()
-print("x (leste):", x)
-print("y (norte):", y)
