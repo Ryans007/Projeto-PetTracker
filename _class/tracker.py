@@ -77,7 +77,7 @@ class Tracker():
 
             if not row:
                 # Se não encontrou o tracker, encerra a thread de salvamento
-                print("Tracker not found in DB. Stopping location saving thread.")
+                # print("Tracker not found in DB. Stopping location saving thread.")
                 self.stop_location_saving()
                 break
 
@@ -92,10 +92,13 @@ class Tracker():
             else:
                 time.sleep(30)
 
+    
+
     def stop_location_saving(self):
-        """Para a thread de salvamento de localização."""
+        """Stops the location saving thread."""
         self._saving_running = False
-        if hasattr(self, '_saving_thread'):
+        # Check if _saving_thread exists and is not the current thread before joining.
+        if hasattr(self, '_saving_thread') and threading.current_thread() != self._saving_thread:
             self._saving_thread.join()
 
     def location_save(self):
