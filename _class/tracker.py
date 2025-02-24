@@ -64,14 +64,32 @@ class Tracker():
         self._saving_thread.start()
 
     def _location_saving_loop(self):
-        """Loop que salva a localização a cada 60 segundos."""
+        """Loop that saves location every interval, stopping if tracker record no longer exists."""
         while self._saving_running:
+            # Verifica se o tracker ainda está no banco de dados
+            db = Database()
+            conn = db.get_connection()
+            cur = conn.cursor()
+            cur.execute("SELECT id FROM tracker WHERE id = ?", (self.id,))
+            row = cur.fetchone()
+            cur.close()
+            conn.close()
+
+            if not row:
+                # Se não encontrou o tracker, encerra a thread de salvamento
+                print("Tracker not found in DB. Stopping location saving thread.")
+                self.stop_location_saving()
+                break
+
+            # Atualiza o tempo de última atualização
             self.last_update = time.time()
+
+            # Salvar a localização e aguardar intervalo apropriado
+            self.location_save()
+            # Escolhe o tempo de sleep conforme posição (fora ou dentro do território)
             if not (1 <= self.current_location.x < self.x_limit - 1 and 1 <= self.current_location.y < self.y_limit - 1):
-                self.location_save()
                 time.sleep(15)
             else:
-                self.location_save()
                 time.sleep(30)
 
     def stop_location_saving(self):
