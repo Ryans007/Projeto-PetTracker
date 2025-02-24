@@ -68,10 +68,9 @@ class Tracker():
             self.last_update = time.time()
             if not (1 <= self.current_location.x < self.x_limit - 1 and 1 <= self.current_location.y < self.y_limit - 1):
                 self.location_save()
-                time.sleep(5)
             else:
                 self.location_save()
-                time.sleep(60)
+                time.sleep(30)
 
     def stop_location_saving(self):
         """Para a thread de salvamento de localização."""
@@ -90,6 +89,7 @@ class Tracker():
                    VALUES (?, ?, ?, ?, ?)''',
                 (self.animal_name, self.current_location.x, self.current_location.y, self.last_update, self.id)
             )
+            print(self.animal_name, self.current_location.x, self.current_location.y, self.last_update, self.id)
             self.conn.commit()
         except Exception as e:
             print("Erro ao salvar localização:", e)
@@ -116,5 +116,3 @@ class Tracker():
             conn.commit()
         finally:
             cursor.close()
-            
-
