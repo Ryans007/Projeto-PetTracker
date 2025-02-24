@@ -77,7 +77,7 @@ class PersonTemplate(metaclass=ABCMeta):
       return f"{type(self).__name__}({self.__name!r}, {self.__email!r}, {self.__celphone}, {self.__id})"
 
 class User(PersonTemplate):
-    def __init__(self, name: str, email: str, password: str, celphone: str, territory: Territory, id: int | None = None) -> None:
+    def __init__(self, name: str, email: str, password: str, celphone: str, territory: Territory | None, id: int | None = None) -> None:
       super().__init__(name, email, password, celphone, id)
       self.territory = territory
       
@@ -129,10 +129,10 @@ class Admin(PersonTemplate):
       self.animal_list = []
       
     def add_animal(self, name: str, specie: str, age: int, territory: Territory, description: str = "No Description"):
-      animal = Animal(name=name, specie=specie, age=age, territory=territory, description=description)
-      self.animal_list.append(animal)
-      territory.add_animal(animal)
-      return animal
+        animal = Animal(name=name, specie=specie, age=age, territory=territory, description=description)
+        self.animal_list.append(animal)
+        territory.add_animal(animal)
+        return animal
     
     def add_territory(self , name: str, x: int, y: int, conn, owner_id: int | None = None):
       builder = TerritoryBuilder()

@@ -1,9 +1,5 @@
-from webbrowser import get
-from _class import tracker
 from _class.tracker import Tracker
 from _class.territory import Territory
-import threading
-import time
 
 class Animal():
     def __init__(self, name: str, specie: str, age: int, territory: Territory, description: str = "No Description", id: int | None = None) -> None:

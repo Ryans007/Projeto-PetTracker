@@ -23,7 +23,7 @@ class RegularUser(UserRole):
     def show_menu(self, facade):
         while True:
             clear_screen()
-            print("\n------------------------------ Menu do Usuário ------------------------------")
+            print(colored(f"------------------------------ {colored("Menu do Usuário", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
             print("1 - Visualizar Território")
             print("2 - Deslogar")
             print("3 - Encerrar Programa")
@@ -36,7 +36,7 @@ class RegularUser(UserRole):
 
             if user_input == 1:
                 clear_screen()
-                print(f"------------------------------ Opções de Vizualização ------------------------------")
+                print(colored(f"------------------------------ {colored("Opções de Vizualização", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                 print("1 - Vizualização em Tempo Real")
                 print("2 - Vizualizar Histórico")
                 user_input = input("Escolha sua opção: ")
@@ -55,7 +55,7 @@ class RegularUser(UserRole):
                     sim_thread.join()
                 if user_input == 2:
                     clear_screen()
-                    print(f"------------------------------ Histórico Territórios ------------------------------")
+                    print(colored(f"------------------------------ {colored("Histórico Territórios", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                     animals = facade.list_animals_in_territory_user(self.user_id)
                     print("Animais cadastrados:")
                     if animals:
@@ -87,7 +87,7 @@ class AdminUser(UserRole):
     def show_menu(self, facade):
         while True:
             clear_screen()
-            print("\n------------------------------ Menu do Administrador ------------------------------")
+            print(colored(f"------------------------------ {colored("Menu do Administrador", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
             print("1 - Opções de Territórios")
             print("2 - Opções de Usuários")
             print("3 - Opções de Animais")
@@ -119,7 +119,7 @@ class AdminUser(UserRole):
     def territory_options(self, facade):
         while True:
             clear_screen()
-            print("\n------------------------------ Gerenciar Territórios ------------------------------")
+            print(colored(f"------------------------------ {colored("Gerenciar Territórios", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
             print("1 - Vizualizar Territórios")
             print("2 - Criar Território")
             print("3 - Deletar Território")
@@ -133,7 +133,7 @@ class AdminUser(UserRole):
 
             if user_input == 1:
                 clear_screen()
-                print(f"----------------------------------- Territórios -----------------------------------")
+                print(colored(f"------------------------------ {colored("Territórios", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                 territories = facade.list_territories()
                 print("Territórios cadastrados: ")
                 for territory in territories:
@@ -145,7 +145,7 @@ class AdminUser(UserRole):
                 territory_id = int(territory_id)
 
                 clear_screen()
-                print(f"------------------------------ Opções de Vizualização ------------------------------")
+                print(colored(f"------------------------------ {colored("Opções de Vizualização", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                 print("1 - Vizualização em Tempo Real")
                 print("2 - Vizualizar Histórico")
                 print("3 - Deletar Histórico")
@@ -166,7 +166,7 @@ class AdminUser(UserRole):
                     sim_thread.join()
                 elif user_input == 2:
                     clear_screen()
-                    print(f"------------------------------ Histórico Territórios ------------------------------")
+                    print(colored(f"------------------------------ {colored("Histórico Territórios", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                     animals = facade.list_animals_in_territory(territory_id)
                     print("Animais cadastrados:")
                     if animals:
@@ -192,7 +192,7 @@ class AdminUser(UserRole):
                     time.sleep(1.5)        
             elif user_input == 2:
                 clear_screen()
-                print(f"------------------------------ Novo Território ------------------------------")
+                print(colored(f"------------------------------ {colored("Novo Território", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                 print(f"Pressione Enter para cancelar...")
                 
                 name = input("Nome do território: ")
@@ -234,7 +234,7 @@ class AdminUser(UserRole):
 
             elif user_input == 3:
                 clear_screen()
-                print(f"------------------------------ Excluir Território ------------------------------")
+                print(colored(f"------------------------------ {colored("Excluir Território", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                 territories = facade.list_territories()
                 print("Territórios cadastrados: ")
                 for territory in territories:
@@ -258,7 +258,7 @@ class AdminUser(UserRole):
     def user_options(self, facade):
         while True:
             clear_screen()
-            print("\n------------------------------ Gerenciar Usuários ------------------------------")
+            print(colored(f"------------------------------ {colored("Gerenciar Usuários", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
             print("1 - Listar Usuários")
             print("2 - Criar Usuário")
             print("3 - Excluir Usuário")
@@ -282,7 +282,7 @@ class AdminUser(UserRole):
                 territories = facade.show_territory_null()
                 
                 if territories:
-                    print(f"------------------------------ Novo Usuário ------------------------------")
+                    print(colored(f"------------------------------ {colored("Novo Usuário", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                     print("Pressione Enter para cancelar...")
                     
                     name = input("Nome: ")
@@ -326,7 +326,7 @@ class AdminUser(UserRole):
 
             elif user_input == 3:
                 clear_screen()
-                print(f"------------------------------ Excluir Usuário ------------------------------")
+                print(colored(f"------------------------------ {colored("Excluir Usuário", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                 users = facade.list_users()
                 print("Usuários cadastrados: ")
                 for user in users:
@@ -350,7 +350,7 @@ class AdminUser(UserRole):
     def animal_options(self, facade):
         while True:
             clear_screen()
-            print("\n------------------------------ Gerenciar Animais ------------------------------")
+            print(colored(f"------------------------------ {colored("Gerenciar Animais", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
             print("1 - Listar Animais")
             print("2 - Adicionar Animal")
             print("3 - Excluir Animal")
@@ -374,7 +374,7 @@ class AdminUser(UserRole):
                     
             elif user_input == 2:
                 clear_screen()
-                print(f"------------------------------ Novo Animal ------------------------------")
+                print(colored(f"------------------------------ {colored("Novo Animal", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                 print("Pressione Enter para cancelar...")
                 
                 name = input("Nome: ")
@@ -407,7 +407,7 @@ class AdminUser(UserRole):
 
             elif user_input == 3:
                 clear_screen()
-                print(f"-----------------------------------------Excluir Território--------------------------------------------------")
+                print(colored(f"----------------------------------------------- {colored("Excluir Animal", "light_blue")} {colored("----------------------------------------------", "light_cyan")}", "light_cyan"))
                 animals = facade.list_animais()
                 print("Animais cadastrados:")
                 if animals:
@@ -433,7 +433,7 @@ class AdminUser(UserRole):
 def login_screen(facade):
     while True:
         clear_screen()
-        print("------------------------------ Fazer Login ------------------------------")
+        print(colored(f"------------------------------ {colored("Fazer Login", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
         email = input("Digite seu e-mail: ")
         senha = pwinput.pwinput(prompt="Digite sua senha: ", mask="*")
 
