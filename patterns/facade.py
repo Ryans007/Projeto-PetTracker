@@ -65,6 +65,10 @@ class SystemFacade:
     # Obtém o território
         territory = self.get_territory_by_id(id)
         if territory:
+
+
+            self.cursor.execute("UPDATE users SET territory_id = NULL WHERE territory_id = ?", (id,))
+
             # Deleta o território
             territory.delete(self.conn)
             
