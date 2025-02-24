@@ -8,6 +8,45 @@ from utils import clear_screen
 from _class.person import Admin
 import threading
 from datetime import datetime
+from _class.tracker import Tracker
+
+def initialize_animal_trackers():
+    # Obter a instância única do Facade
+    facade = SystemFacade()
+
+    # Obter todos os animais do BD (retorna lista de tuplas: (id, name, specie, age, description, territory_id, tracker_id))
+    all_animals = facade.list_animais()
+
+    # Para cada animal, recriar um tracker e iniciar as threads
+    for row in all_animals:
+        animal_id = row[0]
+        animal_name = row[1]
+        territory_id = row[5]
+        tracker_id = row[6]
+
+        # Se o animal tiver um tracker_id válido, podemos tentar reativar
+        if tracker_id is not None:
+            # Obter o território para usar limites de x e y
+            territory_obj = facade.get_territory_by_id(territory_id)
+            x_limit = territory_obj.x
+            y_limit = territory_obj.y
+
+            # Criar instância do tracker
+            tracker = Tracker(
+                state=True, 
+                x_limit=x_limit, 
+                y_limit=y_limit, 
+                id=tracker_id
+            )
+            tracker.animal_id = animal_id
+
+            # Inicia geração de localização
+            tracker.start_location_generation()
+
+            # Inicia salvamento periódico de localização
+            conn = facade.db.get_connection()
+            tracker.start_location_saving(conn, animal_name)
+
 
 # Classe abstrata para os papéis dos usuários
 class UserRole(ABC):
@@ -459,4 +498,6 @@ if __name__ == "__main__":
     facade = SystemFacade()
     # facade.create_admin("admin", "admin@admin.com", "admin", "9387-5652")
     # facade.delete_location_history()
+    initialize_animal_trackers()
+
     login_screen(facade)

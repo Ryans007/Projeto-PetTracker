@@ -3,6 +3,7 @@ import time
 import threading
 from _class.location import Location
 from termcolor import colored
+from database.database import Database
 
 class Tracker():
     def __init__(self, state: bool, x_limit: int, y_limit: int, id: int | None = None) -> None:
@@ -68,10 +69,10 @@ class Tracker():
             self.last_update = time.time()
             if not (1 <= self.current_location.x < self.x_limit - 1 and 1 <= self.current_location.y < self.y_limit - 1):
                 self.location_save()
-                time.sleep(5)
+                time.sleep(15)
             else:
                 self.location_save()
-                time.sleep(60)
+                time.sleep(30)
 
     def stop_location_saving(self):
         """Para a thread de salvamento de localização."""
@@ -80,21 +81,20 @@ class Tracker():
             self._saving_thread.join()
 
     def location_save(self):
-        """Salva a localização atual no banco de dados."""
-        if self.conn is None:
-            return  # Não há conexão definida
-        cursor = self.conn.cursor()
+        db = Database()
+        conn = db.get_connection()
+        cursor = conn.cursor()
         try:
-            cursor.execute(
-                '''INSERT INTO location (animal_name, x, y, time, tracker_id)
-                   VALUES (?, ?, ?, ?, ?)''',
-                (self.animal_name, self.current_location.x, self.current_location.y, self.last_update, self.id)
-            )
-            self.conn.commit()
+            cursor.execute('''
+                INSERT INTO location (animal_name, x, y, time, tracker_id)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (self.animal_name, self.current_location.x, self.current_location.y, self.last_update, self.id))
+            conn.commit()
         except Exception as e:
-            print("Erro ao salvar localização:", e)
+            print("Erro:", e)
         finally:
             cursor.close()
+            conn.close()
 
     def save(self, conn) -> None:
         cursor = conn.cursor()
@@ -116,5 +116,3 @@ class Tracker():
             conn.commit()
         finally:
             cursor.close()
-            
-

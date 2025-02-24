@@ -18,7 +18,9 @@ class Database:
         self._create_tables()
 
     def _create_connection(self):
-        return sqlite3.connect(self.db_path, check_same_thread=False)
+        conn = sqlite3.connect(self.db_path, check_same_thread=False)
+        conn.execute("PRAGMA journal_mode=WAL;")
+        return conn
 
     def _create_tables(self):
         cursor = self.conn.cursor()
