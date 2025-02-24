@@ -62,12 +62,29 @@ class SystemFacade:
             territory.save(self.conn)
 
     def delete_territory(self, id: int):
+    # Obtém o território
         territory = self.get_territory_by_id(id)
         if territory:
+
+
+            self.cursor.execute("UPDATE users SET territory_id = NULL WHERE territory_id = ?", (id,))
+
+            # Deleta o território
             territory.delete(self.conn)
-            self.cursor.execute('''
-            DELETE from animals WHERE                    
-            territory_id = ?''', (id,))
+            
+            # Busca os IDs de todos os animais associados ao território
+            self.cursor.execute("SELECT id FROM animals WHERE territory_id = ?", (id,))
+            animal_ids = [row[0] for row in self.cursor.fetchall()]
+            
+            if animal_ids:
+                # Para cada animal, deleta o tracker associado ao animal
+                for animal_id in animal_ids:
+                    self.cursor.execute("DELETE FROM tracker WHERE animal_id = ?", (animal_id,))
+                
+                # Deleta os animais
+                self.cursor.execute("DELETE FROM animals WHERE territory_id = ?", (id,))
+            
+            self.conn.commit()
 
     def create_user(self, name: str, password: str, email: str, celphone: str, territory_id) -> User | None:
         try:

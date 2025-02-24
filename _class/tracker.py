@@ -3,6 +3,7 @@ import time
 import threading
 from _class.location import Location
 from termcolor import colored
+from database.database import Database
 
 class Tracker():
     def __init__(self, state: bool, x_limit: int, y_limit: int, id: int | None = None) -> None:
@@ -63,38 +64,58 @@ class Tracker():
         self._saving_thread.start()
 
     def _location_saving_loop(self):
-        """Loop que salva a localização a cada 60 segundos."""
+        """Loop that saves location every interval, stopping if tracker record no longer exists."""
         while self._saving_running:
+            # Verifica se o tracker ainda está no banco de dados
+            db = Database()
+            conn = db.get_connection()
+            cur = conn.cursor()
+            cur.execute("SELECT id FROM tracker WHERE id = ?", (self.id,))
+            row = cur.fetchone()
+            cur.close()
+            conn.close()
+
+            if not row:
+                # Se não encontrou o tracker, encerra a thread de salvamento
+                # print("Tracker not found in DB. Stopping location saving thread.")
+                self.stop_location_saving()
+                break
+
+            # Atualiza o tempo de última atualização
             self.last_update = time.time()
+
+            # Salvar a localização e aguardar intervalo apropriado
+            self.location_save()
+            # Escolhe o tempo de sleep conforme posição (fora ou dentro do território)
             if not (1 <= self.current_location.x < self.x_limit - 1 and 1 <= self.current_location.y < self.y_limit - 1):
-                self.location_save()
+                time.sleep(15)
             else:
-                self.location_save()
                 time.sleep(30)
 
+    
+
     def stop_location_saving(self):
-        """Para a thread de salvamento de localização."""
+        """Stops the location saving thread."""
         self._saving_running = False
-        if hasattr(self, '_saving_thread'):
+        # Check if _saving_thread exists and is not the current thread before joining.
+        if hasattr(self, '_saving_thread') and threading.current_thread() != self._saving_thread:
             self._saving_thread.join()
 
     def location_save(self):
-        """Salva a localização atual no banco de dados."""
-        if self.conn is None:
-            return  # Não há conexão definida
-        cursor = self.conn.cursor()
+        db = Database()
+        conn = db.get_connection()
+        cursor = conn.cursor()
         try:
-            cursor.execute(
-                '''INSERT INTO location (animal_name, x, y, time, tracker_id)
-                   VALUES (?, ?, ?, ?, ?)''',
-                (self.animal_name, self.current_location.x, self.current_location.y, self.last_update, self.id)
-            )
-            print(self.animal_name, self.current_location.x, self.current_location.y, self.last_update, self.id)
-            self.conn.commit()
+            cursor.execute('''
+                INSERT INTO location (animal_name, x, y, time, tracker_id)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (self.animal_name, self.current_location.x, self.current_location.y, self.last_update, self.id))
+            conn.commit()
         except Exception as e:
-            print("Erro ao salvar localização:", e)
+            print("Erro:", e)
         finally:
             cursor.close()
+            conn.close()
 
     def save(self, conn) -> None:
         cursor = conn.cursor()
