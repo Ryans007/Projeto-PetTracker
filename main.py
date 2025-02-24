@@ -360,7 +360,20 @@ class AdminUser(UserRole):
                     print(colored("Usuário criado com sucesso!", "green"))
                     time.sleep(1.5)
                 else:
-                    print(colored("Não foi possívei criar o usuário!\nTodos os territórios possuem dono", "red"))
+                    # Limpa a tela
+                    clear_screen()
+                    
+                    # Recupera os territórios sem dono
+                    territories = facade.show_territory_null()
+                    
+                    # Verifica se existem territórios disponíveis
+                    if not territories:
+                        # Se não houver nenhum território disponível
+                        print(colored("Não foi possível criar o usuário! Não existe nenhum território cadastrado.", "red"))
+                    else:
+                        # Se existir ao menos um território, significa que todos já possuem usuário associado
+                        print(colored("Não foi possível criar o usuário! Todos os territórios disponíveis já possuem dono.", "red"))
+                    
                     input("\nPressione Enter para continuar...")
 
             elif user_input == 3:
