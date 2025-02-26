@@ -448,6 +448,7 @@ class AdminUser(UserRole):
                     input("\nPressione Enter para continuar...")
                 else:
                     print(colored("Nenhum animal castrado no território!", "red"))
+                    time.sleep(1.5)
                     
             elif user_input == 2:
                 clear_screen()
