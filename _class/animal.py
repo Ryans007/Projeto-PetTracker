@@ -8,12 +8,12 @@ class Animal():
         self.__age = age
         self.__description = description
         self.territory = territory
-        # Cria o tracker com os limites definidos pelo território
+        # Creates a tracker with boundaries defined by the territory
         self.tracker = Tracker(True, territory.x, territory.y)
         self.__id = id
-        # Inicia a geração contínua de localizações
+        # Starts continuous location generation
         self.tracker.start_location_generation()
-        # Define a localização inicial com base no tracker
+        # Sets the initial location based on the tracker
         self.x = self.tracker.current_location.x
         self.y = self.tracker.current_location.y
         self.tracker_id = self.tracker.id
@@ -22,11 +22,11 @@ class Animal():
         
     @property
     def id(self) -> int | None:
-      return self.__id
+        return self.__id
 
     @id.setter
     def id(self, id: int) -> None:
-      self.__id = id 
+        self.__id = id 
       
     @property
     def name(self) -> str:
@@ -60,16 +60,15 @@ class Animal():
     def description(self, description) -> None:
         self.__description = description
   
-
     def update_position(self):
-        """Atualiza a posição do animal com base na localização do tracker."""
+        """Updates the animal's position based on the tracker location."""
         self.x = self.tracker.current_location.x
         self.y = self.tracker.current_location.y
 
     def save(self, conn):
         """
-        Salva os dados do animal no banco de dados.
-        Após salvar os dados, inicia a thread de salvamento de localização no Tracker.
+        Saves the animal's data to the database.
+        After saving, starts the location saving thread in the Tracker.
         """
         self.conn = conn
         cursor = conn.cursor()
@@ -91,11 +90,12 @@ class Animal():
             conn.commit()
         finally:
             cursor.close()
-        # Inicia o salvamento periódico da localização através do Tracker
+        # Starts periodic location saving through the Tracker
         self.tracker.start_location_saving(self.conn, self.__name)
 
     @staticmethod
     def get_by_id(conn, id: int):
+        """Retrieves an animal from the database by its ID."""
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM animals WHERE id = ?', (id,))
         row = cursor.fetchone()
@@ -103,9 +103,10 @@ class Animal():
             animal = Animal(id=row[0], name=row[1], specie=row[2], age=row[3], description=row[4], territory=Territory.get_by_id(conn,row[5]))
             animal.tracker_id = row[6]
             return animal
-        raise Exception("Nenhum animal corresponde ao id")
+        raise Exception("No animal matches the given ID")
 
     def delete(self, conn):
+        """Deletes the animal from the database if it has a valid ID."""
         if self.__id is not None:
             cursor = conn.cursor()
             cursor.execute('DELETE FROM animals WHERE id = ?', (self.__id,))
@@ -113,4 +114,5 @@ class Animal():
             self.__id = None
 
     def __repr__(self) -> str:
-      return f"{type(self).__name__}({self.name!r}, {self.specie!r}, {self.age}, {self.__id}, {self.description}, {self.territory})"
+        """Returns a string representation of the Animal object."""
+        return f"{type(self).__name__}({self.name!r}, {self.specie!r}, {self.age}, {self.__id}, {self.description}, {self.territory})"
