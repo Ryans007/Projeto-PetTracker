@@ -1,69 +1,69 @@
-# PetTracker
+# **PetTracker**
 
-Um sistema de rastreamento remoto da localização de animais, que permite uma visualização e recebimento de alertas provindos dos animais monitorados.
+A remote animal location tracking system that allows visualization and receiving alerts from monitored animals.
 
 &nbsp;&nbsp;&nbsp;&nbsp;
 
-## Estrutura do Projeto
+## **Project Structure**
 
-### Descrição Geral da Solução
+### **General Solution Description**
 
-O **PetTracker** é um sistema de rastreamento remoto da localização de animais, desenvolvido para auxiliar no monitoramento e na gestão eficiente de territórios e populações de animais. A solução permite que usuários, sejam eles supervisores ou administradores, tenham acesso a uma plataforma centralizada para visualizar a posição dos animais em tempo real, bem como consultar registros históricos dessas localizações.
+**PetTracker** is a remote animal location tracking system designed to assist in monitoring and efficiently managing territories and animal populations. The solution allows users, whether supervisors or administrators, to access a centralized platform to view animal positions in real time and consult historical records of these locations.
 
-Através de um sistema flexível e adaptável, o **PetTracker** possibilita a identificação de padrões de movimentação dos animais, auxiliando na tomada de decisões estratégicas, como realocação de recursos, ajustes em áreas de pastagem e detecção de possíveis situações de risco. Além disso, conta com um mecanismo de alerta que notifica os responsáveis caso um animal ultrapasse os limites estabelecidos do território definido.
+Through a flexible and adaptable system, **PetTracker** enables the identification of animal movement patterns, assisting in strategic decision-making, such as resource reallocation, pasture area adjustments, and detection of potential risk situations. Additionally, it features an alert mechanism that notifies responsible parties if an animal exceeds the defined territorial boundaries.
 
-Para garantir uma ampla aplicabilidade, o sistema pode ser integrado a diferentes tecnologias de rastreamento, como antenas centralizadas utilizando protocolos de comunicação como LoRa ou ZigBee, ou ainda através de SIM Cards individuais com comunicação via redes móveis. A decisão sobre a melhor abordagem a ser utilizada pode variar conforme o cenário de aplicação, tornando o **PetTracker** uma solução versátil para diferentes setores, como agropecuária, zoológicos e reservas naturais.
+To ensure broad applicability, the system can be integrated with different tracking technologies, such as centralized antennas using communication protocols like LoRa or ZigBee, or individual SIM cards with mobile network communication. The best approach can vary depending on the application scenario, making **PetTracker** a versatile solution for various sectors, such as agriculture, zoos, and natural reserves.
 
-### 1. Arquivo `main.py`
-Este é o arquivo principal do projeto, responsável por iniciar o sistema e gerenciar a interface do usuário.
+### **1. `main.py` File**
+This is the project's main file, responsible for starting the system and managing the user interface.
 
-#### Classes de Usuário
-- **UserRole**: Classe abstrata para definir o papel dos usuários.
-- **RegularUser**: Classe para usuários comuns que podem visualizar territórios.
-- **AdminUser**: Classe para administradores que têm acesso total ao sistema.
+#### **User Classes**
+- **UserRole**: Abstract class defining user roles.
+- **RegularUser**: Class for common users who can view territories.
+- **AdminUser**: Class for administrators with full system access.
 
-#### Função de Login
-- `login_screen(facade)`: Gerencia a tela de login e autenticação de usuários.
+#### **Login Function**
+- `login_screen(facade)`: Manages the login screen and user authentication.
 
-### 2. Classes de Apoio
-#### Classe `Tracker` (Arquivo: `_class/tracker.py`)
-- Responsável por gerar e salvar a localização dos animais.
-- Utiliza **threads** para realizar a geração contínua de localizações e o salvamento periódico no banco de dados.
+### **2. Supporting Classes**
+#### **`Tracker` Class (`_class/tracker.py`)**
+- Responsible for generating and saving animal locations.
+- Uses **threads** to continuously generate locations and periodically save them in the database.
 
-#### Classe `Animal` (Arquivo: `_class/animal.py`)
-- Representa um animal no sistema.
-- Cada animal possui um rastreador (`Tracker`) que gera suas posições.
+#### **`Animal` Class (`_class/animal.py`)**
+- Represents an animal in the system.
+- Each animal has a tracker (`Tracker`) that generates its positions.
 
-#### Classe `Territory` (Arquivo: `_class/territory.py`)
-- Representa um território no sistema.
-- Cada território pode ter vários animais associados.
+#### **`Territory` Class (`_class/territory.py`)**
+- Represents a territory in the system.
+- Each territory can have multiple associated animals.
 
-### 3. Padrões de Design Utilizados
-#### Facade (Padrão de Fachada)
-- **SystemFacade**: Centraliza e simplifica a interação com o sistema, fornecendo uma interface unificada para várias operações.
+### **3. Design Patterns Used**
+#### **Facade Pattern**
+- **SystemFacade**: Centralizes and simplifies system interaction, providing a unified interface for various operations.
 
-#### Proxy (Padrão de Proxy)
-- **UserProxy, AdminProxy, TerritoryProxy**: Utilizados para armazenar em cache objetos frequentemente acessados, reduzindo a necessidade de consultas repetidas ao banco de dados.
+#### **Proxy Pattern**
+- **UserProxy, AdminProxy, TerritoryProxy**: Used to cache frequently accessed objects, reducing the need for repeated database queries.
 
-#### Builder (Padrão de Construtor)
-- **TerritoryBuilder**: Facilita a criação de objetos `Territory` complexos, permitindo a configuração passo a passo de suas propriedades.
+#### **Builder Pattern**
+- **TerritoryBuilder**: Facilitates the creation of complex `Territory` objects, allowing step-by-step configuration of their properties.
 
-#### Adapter (Padrão de Adaptador)
-- **CoordinateAdapter**: Converte coordenadas geográficas em componentes cartesianas (x, y) para uso no sistema.
+#### **Adapter Pattern**
+- **CoordinateAdapter**: Converts geographic coordinates into Cartesian components (x, y) for system use.
 
-#### Singleton (Padrão de Singleton)
-- **Database**: Garante que apenas uma instância da classe de banco de dados seja criada, fornecendo um ponto de acesso global a essa instância.
+#### **Singleton Pattern**
+- **Database**: Ensures only one instance of the database class is created, providing a global access point to this instance.
 
-#### Strategy (Padrão de Estratégia)
-- **UserRole**: Define uma interface comum para diferentes papéis de usuário (RegularUser e AdminUser), permitindo que cada um tenha seu próprio comportamento de menu.
+#### **Strategy Pattern**
+- **UserRole**: Defines a common interface for different user roles (RegularUser and AdminUser), allowing each to have its own menu behavior.
 
-#### Template Method (Padrão de Método Template)
-- **PersonTemplate**: Define o esqueleto de um algoritmo na superclasse, permitindo que subclasses específicas implementem detalhes do algoritmo.
+#### **Template Method Pattern**
+- **PersonTemplate**: Defines the skeleton of an algorithm in the superclass, allowing specific subclasses to implement details of the algorithm.
 
-### 4. Banco de Dados
-#### Classe `Database` (Arquivo: `database/database.py`)
-- Gerencia a conexão e as operações com o banco de dados SQLite.
-- Cria e mantém as tabelas necessárias:
+### **4. Database**
+#### **`Database` Class (`database/database.py`)**
+- Manages the SQLite database connection and operations.
+- Creates and maintains necessary tables:
   - `admins`
   - `users`
   - `territories`
@@ -73,59 +73,79 @@ Este é o arquivo principal do projeto, responsável por iniciar o sistema e ger
 
 &nbsp;&nbsp;&nbsp;&nbsp;
 
-## Funcionalidades do Sistema
+## **System Features**
 
-### 1. Usuários Comuns
-- Podem visualizar territórios.
-- Iniciam uma **thread** para simular a visualização do território em tempo real.
+### **1. Regular Users**
+- Can view territories.
+- Start a **thread** to simulate real-time territory visualization.
 
-### 2. Administradores
-- Têm acesso total ao sistema.
-- Podem gerenciar **territórios, usuários e animais**.
-- Podem visualizar territórios em tempo real e históricos de localização dos animais.
-
-&nbsp;&nbsp;&nbsp;&nbsp;
-
-## Regras e Limitações
-
-### Login e Autenticação
-- Os usuários e administradores são autenticados usando **bcrypt** para verificação de senha.
-
-### Gerenciamento de Territórios
-- Os administradores podem **criar, visualizar e deletar** territórios.
-
-### Gerenciamento de Usuários
-- Os administradores podem **criar, listar e deletar** usuários.
-
-### Gerenciamento de Animais
-- Os administradores podem **adicionar, listar e deletar** animais.
+### **2. Administrators**
+- Have full system access.
+- Can manage **territories, users, and animals**.
+- Can view territories in real-time and access historical animal location records.
 
 &nbsp;&nbsp;&nbsp;&nbsp;
 
-## Interações Entre Padrões
+## **Rules and Limitations**
 
-### Facade e Classes de Entidade
-- **SystemFacade** interage com **Tracker, Animal e Territory** para realizar operações complexas de forma simplificada.
+### **Login and Authentication**
+- Users and administrators are authenticated using **bcrypt** for password verification.
 
-### Proxy para Cache
-- **UserProxy, AdminProxy, TerritoryProxy** armazenam em cache objetos frequentemente acessados, melhorando a eficiência do sistema.
+### **Territory Management**
+- Administrators can **create, view, and delete** territories.
 
-### Builder para Criação de Objetos
-- **TerritoryBuilder** facilita a criação de objetos `Territory` complexos, permitindo a configuração passo a passo de suas propriedades.
+### **User Management**
+- Administrators can **create, list, and delete** users.
 
-### Adapter para Conversão de Coordenadas
-- **CoordinateAdapter** converte coordenadas geográficas em componentes cartesianas (x, y) para uso no sistema.
-f
-### Singleton para Gerenciamento de Banco de Dados
-- **Database**: Utiliza o padrão Singleton para garantir que apenas uma instância da classe de banco de dados seja criada. Isso é feito através do método `__new__`, que verifica se uma instância já existe antes de criar uma nova. Esse padrão é útil para gerenciar a conexão com o banco de dados de forma centralizada e eficiente.
-
-### Strategy para Gerenciamento de Menus de Usuário
-- **UserRole**: Define uma interface comum para diferentes papéis de usuário (RegularUser e AdminUser). Cada classe concreta implementa o método `show_menu` de forma diferente, permitindo que cada tipo de usuário tenha seu próprio comportamento de menu. Isso facilita a adição de novos tipos de usuários no futuro sem modificar o código existente.
-
-### Template Method para Definição de Algoritmos
-- **PersonTemplate**: Define o esqueleto de um algoritmo na superclasse, permitindo que subclasses específicas (User e Admin) implementem detalhes do algoritmo. Métodos abstratos como `save` e `delete` são definidos na superclasse e implementados nas subclasses, garantindo que a estrutura do algoritmo seja seguida enquanto permite variações nos detalhes.
+### **Animal Management**
+- Administrators can **add, list, and delete** animals.
 
 &nbsp;&nbsp;&nbsp;&nbsp;
 
-## Conclusão
-O projeto **"PetTracker"** é um sistema robusto de rastreamento de animais, utilizando **padrões de design** para manter o código organizado e eficiente. Ele fornece funcionalidades essenciais para **gerenciamento de territórios e animais**, com uma interface intuitiva para diferentes tipos de usuários.
+## **Interactions Between Patterns**
+
+### **Facade and Entity Classes**
+- **SystemFacade** interacts with **Tracker, Animal, and Territory** to perform complex operations in a simplified manner.
+
+### **Proxy for Caching**
+- **UserProxy, AdminProxy, TerritoryProxy** cache frequently accessed objects, improving system efficiency.
+
+### **Builder for Object Creation**
+- **TerritoryBuilder** facilitates the creation of complex `Territory` objects, allowing step-by-step configuration of their properties.
+
+### **Adapter for Coordinate Conversion**
+- **CoordinateAdapter** converts geographic coordinates into Cartesian components (x, y) for system use.
+
+### **Singleton for Database Management**
+- **Database**: Uses the Singleton pattern to ensure that only one instance of the database class is created. This is done through the `__new__` method, which checks if an instance already exists before creating a new one. This pattern is useful for managing database connections centrally and efficiently.
+
+### **Strategy for User Menu Management**
+- **UserRole**: Defines a common interface for different user roles (RegularUser and AdminUser). Each concrete class implements the `show_menu` method differently, allowing each user type to have its own menu behavior. This facilitates the addition of new user types in the future without modifying existing code.
+
+### **Template Method for Algorithm Definition**
+- **PersonTemplate**: Defines the skeleton of an algorithm in the superclass, allowing specific subclasses (User and Admin) to implement details of the algorithm. Abstract methods like `save` and `delete` are defined in the superclass and implemented in the subclasses, ensuring the algorithm structure is followed while allowing variations in details.
+
+&nbsp;&nbsp;&nbsp;&nbsp;
+
+## **Installation and Usage**
+
+### **Installation**
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/your-repo/pettracker.git
+   cd pettracker
+   ```
+2. Install the required dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Run the main script:
+   ```bash
+   python main.py
+   ```
+
+&nbsp;&nbsp;&nbsp;&nbsp;
+
+## **Conclusion**
+The **"PetTracker"** project is a robust animal tracking system utilizing **design patterns** to keep the code organized and efficient. It provides essential features for **territory and animal management**, with an intuitive interface for different user types.
+
