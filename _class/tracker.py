@@ -137,3 +137,6 @@ class Tracker():
             conn.commit()
         finally:
             cursor.close()
+            
+    def __repr__(self) -> str:
+      return f"{type(self).__name__}({self.state!r}, {self.x_limit!r}, {self.y_limit!r})"

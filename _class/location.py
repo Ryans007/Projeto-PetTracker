@@ -20,3 +20,6 @@ class Location():
    @y.setter
    def y(self, y: int):
       self.__y = y
+      
+   def __repr__(self) -> str:
+      return f"{type(self).__name__}({self.x!r}, {self.y!r})"

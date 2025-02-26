@@ -111,3 +111,6 @@ class Animal():
             cursor.execute('DELETE FROM animals WHERE id = ?', (self.__id,))
             conn.commit()
             self.__id = None
+
+    def __repr__(self) -> str:
+      return f"{type(self).__name__}({self.name!r}, {self.specie!r}, {self.age}, {self.__id}, {self.description}, {self.territory})"
