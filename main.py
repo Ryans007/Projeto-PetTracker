@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import time
+from turtle import color
 import bcrypt
 import pwinput
 from termcolor import colored
@@ -98,13 +99,19 @@ class RegularUser(UserRole):
                     animals = facade.list_animals_in_territory_user(self.user_id)
                     print("Animais cadastrados:")
                     if animals:
+                        existing_ids = []
                         for animal in animals:
+                            existing_ids.append(animal.id)
                             print(f"ID: {animal.id}, Nome: {animal.name}")
                         try:
                             animal_id = input("Digite o ID do animal que você deseja vizualizar o histórico: ")
                             if animal_id == "":
                                 return
                             animal_id = int(animal_id)
+                            if animal_id not in existing_ids:
+                                print(colored("Erro: Terrotório Inexistente!", "red"))
+                                time.sleep(1.5)
+                                return
                             locations = facade.show_location_history(animal_id)
                             for location in locations:
                                 print(f"Nome: {location[1]}, x: {location[2]}, y: {location[3]}, horario: {datetime.fromtimestamp(location[4]).strftime("%d/%m/%Y %H:%M:%S.%f")[:-3]}")
@@ -175,14 +182,20 @@ class AdminUser(UserRole):
                 print(colored(f"------------------------------ {colored("Territórios", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                 territories = facade.list_territories()
                 print("Territórios cadastrados: ")
+                existing_ids = []
                 for territory in territories:
+                    existing_ids.append(territory.id)
                     print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
 
                 territory_id = input("Digite o ID do território que deseja visualizar: ")
                 if territory_id == "":
                     return
                 territory_id = int(territory_id)
-
+                if territory_id not in existing_ids:
+                    print(colored("Error: Território inexistente", "red"))
+                    time.sleep(1.5)
+                    return
+                
                 clear_screen()
                 print(colored(f"------------------------------ {colored("Opções de Vizualização", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                 print("1 - Vizualização em Tempo Real")
@@ -209,13 +222,19 @@ class AdminUser(UserRole):
                     animals = facade.list_animals_in_territory(territory_id)
                     print("Animais cadastrados:")
                     if animals:
+                        existing_ids = []
                         for animal in animals:
+                            existing_ids.append(animal.id)
                             print(f"ID: {animal.id}, Nome: {animal.name}")
                         try:
                             animal_id = input("Digite o ID do animal que você deseja vizualizar o histórico: ")
                             if animal_id == "":
                                 return
                             animal_id = int(animal_id)
+                            if animal_id not in existing_ids:
+                                print(colored("Error: Animal Inexistente", "red"))
+                                time.sleep(1.5)
+                                return
                             locations = facade.show_location_history(animal_id)
                             for location in locations:
                                 print(f"Nome: {location[1]}, x: {location[2]}, y: {location[3]}, horario: {datetime.fromtimestamp(location[4]).strftime("%d/%m/%Y %H:%M:%S.%f")[:-3]}")
@@ -348,9 +367,15 @@ class AdminUser(UserRole):
                         time.sleep(1.5)
                         return 
                     territories = facade.show_territory_null()
+                    existing_ids = []
                     for territorie in territories:
+                        existing_ids.append(territorie.id)
                         print(f"ID: {territorie.id}, Nome: {territorie.name}, X: {territorie.x}, Y: {territorie.y}")
                     territory_id = input("ID do território: ")
+                    if int(territory_id) not in existing_ids:
+                        print(colored("Erro: Território Inexistente!", "red"))
+                        time.sleep(1.5)
+                        return
                     if territory_id.strip() == "":
                         print(colored("Criação de usuário cancelada...", "yellow"))
                         time.sleep(1.5)
@@ -369,7 +394,7 @@ class AdminUser(UserRole):
                     # Verifica se existem territórios disponíveis
                     if not territories:
                         # Se não houver nenhum território disponível
-                        print(colored("Não foi possível criar o usuário! Não existe nenhum território cadastrado.", "red"))
+                        print(colored("Não foi possível criar o usuário! Não existe nenhum território disponível.", "red"))
                     else:
                         # Se existir ao menos um território, significa que todos já possuem usuário associado
                         print(colored("Não foi possível criar o usuário! Todos os territórios disponíveis já possuem dono.", "red"))
@@ -446,8 +471,18 @@ class AdminUser(UserRole):
                     print(colored("Criação do animal cancelada...", "yellow"))
                     time.sleep(1.5)
                     return 
-                  
+                
+                territories = facade.list_territories()
+                print("Territórios cadastrados: ")
+                existing_ids = []
+                for territory in territories:
+                    existing_ids.append(territory.id)
+                    print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")  
                 territory_id = int(input("ID do território: "))
+                if territory_id not in existing_ids:
+                    print(colored("Erro: Território Inexistente", "red"))
+                    time.sleep(1.5)
+                    return
                 if str(territory_id).strip() == "":
                     print(colored("Criação do animal cancelada...", "yellow"))
                     time.sleep(1.5)
@@ -463,10 +498,16 @@ class AdminUser(UserRole):
                 animals = facade.list_animais()
                 print("Animais cadastrados:")
                 if animals:
+                    existing_ids = []
                     for animal in animals:
+                        existing_ids.append(animal[0])
                         print(f"ID: {animal[0]}, Nome: {animal[1]}, Espécie: {animal[2]}, Idade: {animal[3]}, Descrição: {animal[4]}, ID território: {animal[5]},ID rastreador: {animal[6]}")
                     print("Pressione Enter para cancelar...\n")
                     id_delete = input("ID do animal para excluir: ")
+                    if int(id_delete) not in existing_ids:
+                        print(colored("Erro: Animal Inexistente", "red"))
+                        time.sleep(1.5)
+                        return
                     if id_delete.strip() == "":
                         print(colored("Criação do animal cancelada...", "yellow"))
                         time.sleep(1.5)
