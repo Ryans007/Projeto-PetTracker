@@ -623,36 +623,47 @@ class AdminUser(UserRole):
             elif user_input == 4:
                 return # Return to the admin menu
 
-# Tela de login
+# Login screen function that handles user authentication and redirects based on role
 def login_screen(facade):
     while True:
-        clear_screen()
+        clear_screen()  # Clear the terminal screen before displaying the login form
+        # Display the login header using colored text
         print(colored(f"------------------------------ {colored("Fazer Login", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
-        email = input("Digite seu e-mail: ")
-        senha = pwinput.pwinput(prompt="Digite sua senha: ", mask="*")
+        email = input("Digite seu e-mail: ") # Prompt the user to enter their email
+        senha = pwinput.pwinput(prompt="Digite sua senha: ", mask="*") # Prompt the user to enter their password (masked)
 
+        # Retrieve admin and user records using the entered email
         admin = facade.get_admin_by_email(email)
         user = facade.get_user_by_email(email)
 
+        # Verify if the credentials match an admin account using bcrypt
         if admin and bcrypt.checkpw(senha.encode(), admin[3]):
+            # If admin authentication is successful, assign admin attributes and instantiate AdminUser role
             facade.admin = Admin(admin[1], admin[2], admin[3], admin[4])
             role = AdminUser()
+        # Verify if the credentials match a regular user account
         elif user and bcrypt.checkpw(senha.encode(), user[3]):
+            # If user authentication is successful, extract the user ID and instantiate RegularUser role
             user_id = user[0]
             role = RegularUser(user_id)
         else:
+            # Notify the user if the login or password is invalid and repeat the loop
             print("Login ou senha inválidos, tente novamente.")
             time.sleep(1.5)
             continue
-
+        
+        # Display the corresponding menu for the authenticated role
         role.show_menu(facade)
         break
 
-# Inicialização
+# Program initialization entry point
 if __name__ == "__main__":
-    facade = SystemFacade()
+    facade = SystemFacade() # Obtain the SystemFacade singleton instance
+    # Uncomment the following lines for initial setup actions, if necessary:
     # facade.create_admin("admin", "admin@admin.com", "admin", "9387-5652")
-    # facade.delete_location_history()
-    initialize_animal_trackers()
+    # facade.delete_location_history())
 
+    initialize_animal_trackers() # Initialize animal trackers from existing records in the database
+
+    # Launch the login screen for user authentication
     login_screen(facade)
