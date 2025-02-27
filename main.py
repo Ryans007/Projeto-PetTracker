@@ -74,10 +74,24 @@ class UserRole(ABC):
 
 # Classe para usuários comuns (apenas visualizar territórios)
 class RegularUser(UserRole):
+    """
+    A class representing a regular user role.
+    Inherits from UserRole and implements the show_menu method.
+    """
     def __init__(self, user_id: int) -> None:
+        """
+        Initializes a RegularUser instance.
+
+        :param user_id: The unique identifier of the user.
+        """
         super().__init__()
         self.user_id = user_id
     def show_menu(self, facade):
+        """
+        Displays the menu for the regular user and handles user input.
+
+        :param facade: An instance of the SystemFacade to interact with the system.
+        """
         while True:
             clear_screen()
             print(colored(f"------------------------------ {colored("Menu do Usuário", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
