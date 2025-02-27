@@ -12,27 +12,33 @@ from datetime import datetime
 from _class.tracker import Tracker
 
 def initialize_animal_trackers():
-    # Obter a instância única do Facade
+    """
+    Initializes animal trackers by retrieving all animals from the database,
+    recreating their trackers, and starting the location generation and saving threads.
+    """
+
+    # Obtain the singleton instance of the SystemFacade
     facade = SystemFacade()
 
-    # Obter todos os animais do BD (retorna lista de tuplas: (id, name, specie, age, description, territory_id, tracker_id))
+    # Retrieve all animals from the database
+    # Returns a list of tuples: (id, name, specie, age, description, territory_id, tracker_id)
     all_animals = facade.list_animais()
 
-    # Para cada animal, recriar um tracker e iniciar as threads
+    # For each animal, recreate its tracker and start the threads
     for row in all_animals:
         animal_id = row[0]
         animal_name = row[1]
         territory_id = row[5]
         tracker_id = row[6]
 
-        # Se o animal tiver um tracker_id válido, podemos tentar reativar
+        # If the animal has a valid tracker_id, attempt to reactivate it
         if tracker_id is not None:
-            # Obter o território para usar limites de x e y
+            # Retrieve the territory to use its x and y limits
             territory_obj = facade.get_territory_by_id(territory_id)
             x_limit = territory_obj.x
             y_limit = territory_obj.y
 
-            # Criar instância do tracker
+            # Create an instance of the tracker
             tracker = Tracker(
                 state=True, 
                 x_limit=x_limit, 
@@ -41,10 +47,10 @@ def initialize_animal_trackers():
             )
             tracker.animal_id = animal_id
 
-            # Inicia geração de localização
+            # Start location generation
             tracker.start_location_generation()
 
-            # Inicia salvamento periódico de localização
+            # Start periodic location saving
             conn = facade.db.get_connection()
             tracker.start_location_saving(conn, animal_name)
 
