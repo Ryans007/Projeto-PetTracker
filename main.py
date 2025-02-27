@@ -55,7 +55,6 @@ def initialize_animal_trackers():
             tracker.start_location_saving(conn, animal_name)
 
 
-# Classe abstrata para os papéis dos usuários
 class UserRole(ABC):
     """
     An abstract base class representing the role of a user.
@@ -165,36 +164,49 @@ class RegularUser(UserRole):
                 facade.close_connection()
                 exit()
 
-# Classe para administradores (acesso total)
+
 class AdminUser(UserRole):
     def show_menu(self, facade):
+        """
+        Displays the administrator menu and processes user input for various options.
+        
+        :param facade: An instance of the SystemFacade for system interactions.
+        """
         while True:
-            clear_screen()
+            clear_screen() # Clear the screen before displaying menu options
+
+            # Print the header for the administrator menu using colored output
             print(colored(f"------------------------------ {colored("Menu do Administrador", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
-            print("1 - Opções de Territórios")
-            print("2 - Opções de Usuários")
-            print("3 - Opções de Animais")
-            print("4 - Voltar ao Menu Principal")
-            print("5 - Deslogar")
-            print("6 - Encerrar Programa")
+
+            # Display the menu options for admin users
+            print("1 - Opções de Territórios") # Territory options
+            print("2 - Opções de Usuários") # User options
+            print("3 - Opções de Animais") # Animal options
+            print("4 - Voltar ao Menu Principal") # Return to the main menu
+            print("5 - Deslogar") # Log out
+            print("6 - Encerrar Programa") # Exit the program
 
             try:
+                # Attempt to read the user's menu selection and convert it to an integer
                 admin_input = int(input("Escolha sua opção: "))
             except ValueError:
+                # If conversion fails, notify the user and continue the loop
                 print("Opção inválida! Digite um número.")
                 continue
 
+            # Process the user's input by calling corresponding methods
             if admin_input == 1:
-                self.territory_options(facade)
+                self.territory_options(facade) # Handle territory options
             elif admin_input == 2:
-                self.user_options(facade)
+                self.user_options(facade)   # Handle user options
             elif admin_input == 3:
-                self.animal_options(facade)
+                self.animal_options(facade)     # Handle animal options
             elif admin_input == 4:
-                return  # Volta ao menu principal
+                return  # Return to the main menu
             elif admin_input == 5:
-                login_screen(facade)
+                login_screen(facade) # Log out: return to the login screen
             elif admin_input == 6:
+                # Inform the user that the program is exiting, close the connection, then exit
                 print("Encerrando o programa...")
                 facade.close_connection()
                 exit()
