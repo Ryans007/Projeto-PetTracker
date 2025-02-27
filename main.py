@@ -115,18 +115,21 @@ class RegularUser(UserRole):
                     return
                 user_input = int(user_input)
                 if user_input == 1:
+                    # Create an event to signal the thread to stop
                     stop_event = threading.Event()
+                    # Start a new thread to show the territory in real-time
                     sim_thread = threading.Thread(target=lambda: facade.show_territory_user(self.user_id, stop_event))
                     sim_thread.start()
                     print("\nA simulação do território foi iniciada em uma nova janela.")
                     print("Para voltar ao menu, volte ao terminal do menu e pressione Enter.")
-                    input() # Aguarda o usuário pressionar Enter no terminal principal
-                    # Sinaliza para a simulação encerrar e aguarda a thread terminar
+                    input() # Wait for the user to press Enter in the main terminal
+                    # Signal the simulation to stop and wait for the thread to finish
                     stop_event.set()
                     sim_thread.join()
                 if user_input == 2:
                     clear_screen()
                     print(colored(f"------------------------------ {colored("Histórico Territórios", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
+                    # List animals in the user's territory
                     animals = facade.list_animals_in_territory_user(self.user_id)
                     print("Animais cadastrados:")
                     if animals:
@@ -143,6 +146,7 @@ class RegularUser(UserRole):
                                 print(colored("Erro: Terrotório Inexistente!", "red"))
                                 time.sleep(1.5)
                                 return
+                            # Show location history for the selected animal
                             locations = facade.show_location_history(animal_id)
                             for location in locations:
                                 print(f"Nome: {location[1]}, x: {location[2]}, y: {location[3]}, horario: {datetime.fromtimestamp(location[4]).strftime("%d/%m/%Y %H:%M:%S.%f")[:-3]}")
@@ -153,8 +157,10 @@ class RegularUser(UserRole):
                         print(colored("Nenhum animal cadastrado no território!", "red"))
                         time.sleep(1.5)
             elif user_input == 2:
+                # Log out and return to the login screen
                 login_screen(facade)
             elif user_input == 3:
+                # Close the program
                 print("Encerrando o programa...")
                 facade.close_connection()
                 exit()
