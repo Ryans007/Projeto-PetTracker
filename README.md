@@ -132,7 +132,7 @@ This is the project's main file, responsible for starting the system and managin
 ### **Installation**
 1. Clone this repository:
    ```bash
-   git clone https://github.com/your-repo/pettracker.git
+   git clone git@github.com:Ryans007/Projeto-PetTracker.git
    cd pettracker
    ```
 2. Install the required dependencies:
