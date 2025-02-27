@@ -143,10 +143,10 @@ This is the project's main file, responsible for starting the system and managin
    ```bash
    python main.py
    ```
-### **Login Padrão**
-O sistema inicia com um login padrão já configurado. Utilize as seguintes credenciais para acessar:
-- **Email:** admin@admin.com
-- **Senha:** admin
+### **Default Login**  
+The system starts with a pre-configured default login. Use the following credentials to access:  
+- **Email:** admin@admin.com  
+- **Password:** admin  
 
 &nbsp;&nbsp;&nbsp;&nbsp;
 
