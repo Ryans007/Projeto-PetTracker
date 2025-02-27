@@ -212,96 +212,121 @@ class AdminUser(UserRole):
                 exit()
 
     def territory_options(self, facade):
+        """
+        Displays the territory management menu and handles administrator input to view,
+        create, or delete territories.
+        
+        :param facade: An instance of SystemFacade for database interactions.
+        """
         while True:
-            clear_screen()
+            clear_screen() # Clear the terminal screen
+
+            # Display the header for territory management using colored output
             print(colored(f"------------------------------ {colored("Gerenciar Territórios", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
-            print("1 - Vizualizar Territórios")
-            print("2 - Criar Território")
-            print("3 - Deletar Território")
-            print("4 - Voltar ao Menu Admin")
+            print("1 - Vizualizar Territórios") # Option to view territories
+            print("2 - Criar Território")  # Option to create a new territory
+            print("3 - Deletar Território") # Option to delete a territory
+            print("4 - Voltar ao Menu Admin") # Option to return to the admin menu
 
             try:
+                # Read and convert the user's menu selection to an integer
                 user_input = int(input("Escolha sua opção: "))
             except ValueError:
+                # Inform the user of an invalid option if conversion fails
                 print("Opção inválida! Digite um número.")
                 continue
 
             if user_input == 1:
-                clear_screen()
+                clear_screen() # Clear screen to display territory details
+                # Print header for viewing territories
                 print(colored(f"------------------------------ {colored("Territórios", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                 territories = facade.list_territories()
                 print("Territórios cadastrados: ")
-                existing_ids = []
+                existing_ids = [] # List to store IDs of existing territories
+                # Iterate over each territory to display details and record its ID
                 for territory in territories:
                     existing_ids.append(territory.id)
                     print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
 
+                 # Prompt the user to enter the territory ID for viewing
                 territory_id = input("Digite o ID do território que deseja visualizar: ")
-                if territory_id == "":
+                if territory_id == "": # Check for cancellation (empty input)
                     return
                 territory_id = int(territory_id)
                 if territory_id not in existing_ids:
+                    # If the territory ID does not exist, notify the user and pause briefly
                     print(colored("Error: Território inexistente", "red"))
                     time.sleep(1.5)
                     return
                 
-                clear_screen()
+                clear_screen() # Clear screen to display visualization options
+                # Print header for visualization options
                 print(colored(f"------------------------------ {colored("Opções de Vizualização", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
-                print("1 - Vizualização em Tempo Real")
-                print("2 - Vizualizar Histórico")
-                print("3 - Deletar Histórico")
+                print("1 - Vizualização em Tempo Real") # Option for real-time visualization
+                print("2 - Vizualizar Histórico") # Option to view history
+                print("3 - Deletar Histórico") # Option to delete history
                 user_input = input("Escolha sua opção: ")
                 if user_input == "":
                     return
                 user_input = int(user_input)
 
                 if user_input == 1:
-                    stop_event = threading.Event()
+                    # Start real-time simulation in a separate thread
+                    stop_event = threading.Event() # Create an event to signal thread stopping
                     sim_thread = threading.Thread(target=lambda: facade.show_territory_admin(territory_id, stop_event))
                     sim_thread.start()
                     print("\nA simulação do território foi iniciada em uma nova janela.")
                     print("Para voltar ao menu, volte ao terminal do menu e pressione Enter.")
-                    input() # Aguarda o usuário pressionar Enter no terminal principal
-                    # Sinaliza para a simulação encerrar e aguarda a thread terminar
+                    input()  # Wait for user to press Enter
+                    # Signal the simulation to stop and wait for the thread to finish
                     stop_event.set()
                     sim_thread.join()
                 elif user_input == 2:
-                    clear_screen()
+                    clear_screen()  # Clear screen to show history
+                    # Print header for territory history
                     print(colored(f"------------------------------ {colored("Histórico Territórios", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                     animals = facade.list_animals_in_territory(territory_id)
                     print("Animais cadastrados:")
                     if animals:
-                        existing_ids = []
+                        existing_ids = []  # List to store animal IDs
                         for animal in animals:
                             existing_ids.append(animal.id)
                             print(f"ID: {animal.id}, Nome: {animal.name}")
                         try:
+                            # Prompt the user to select an animal to view its history
                             animal_id = input("Digite o ID do animal que você deseja vizualizar o histórico: ")
                             if animal_id == "":
                                 return
                             animal_id = int(animal_id)
                             if animal_id not in existing_ids:
+                                # If the entered animal ID is not valid, inform the user
                                 print(colored("Error: Animal Inexistente", "red"))
                                 time.sleep(1.5)
                                 return
+                            # Retrieve and display location history for the chosen animal
                             locations = facade.show_location_history(animal_id)
                             for location in locations:
                                 print(f"Nome: {location[1]}, x: {location[2]}, y: {location[3]}, horario: {datetime.fromtimestamp(location[4]).strftime("%d/%m/%Y %H:%M:%S.%f")[:-3]}")
                             input("\nPressione Enter para continuar...")
                         except ValueError:
+                            # Notify the user if an invalid animal ID was entered
                             print("ID inválido! Digite um número.")  
                     else:
+                        # Notify if there are no animals registered in the territory
                         print(colored("Nenhum animal cadastrado no território!", "red"))
                         time.sleep(1.5)
                 elif user_input == 3:
+                    # Delete location history from the facade
                     facade.delete_location_history()
                     print(colored("Histórico deletado com sucesso!", "green"))
                     time.sleep(1.5)        
             elif user_input == 2:
-                clear_screen()
+                clear_screen() # Clear screen to initiate territory creation
+                # Display header for creating a new territory
                 print(colored(f"------------------------------ {colored("Novo Território", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                 print(f"Pressione Enter para cancelar...")
                 
+                # Prompt for territory details
                 name = input("Nome do território: ")
                 if name.strip() == "":
                     print(colored("Criação de território cancelada...", "yellow"))
@@ -335,20 +360,23 @@ class AdminUser(UserRole):
                     return 
                 long2_float = float(long2)
                 
+                # Create the new territory via the facade interface
                 facade.create_territory(name, lat1_float, long1_float, lat2_float, long2_float)
                 print(colored("Território criado com sucesso!", "green"))
                 time.sleep(1.5)
 
             elif user_input == 3:
-                clear_screen()
+                clear_screen()  # Clear screen for territory deletion
+                # Display header for territory deletion
                 print(colored(f"------------------------------ {colored("Excluir Território", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
-                territories = facade.list_territories()
+                territories = facade.list_territories() # Retrieve territories from the facade
                 print("Territórios cadastrados: ")
                 for territory in territories:
                     print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")
                 print("Pressione Enter para cancelar...")
                 
                 id_delete = input("\nID do território para deletar: ")
+                # Delete the specified territory via the facade
                 if id_delete.strip() == "":
                     print(colored("Exclusão de território cancelada...", "yellow"))
                     time.sleep(1.5)
@@ -360,24 +388,32 @@ class AdminUser(UserRole):
                 time.sleep(1.5)
 
             elif user_input == 4:
-                return  # Volta ao menu do admin
+                return  # Return to the admin menu
 
     def user_options(self, facade):
+        """
+        Displays the user management menu and processes administrator actions
+        related to listing, creating, and deleting users.
+        
+        :param facade: An instance of SystemFacade for interacting with the system.
+        """
         while True:
-            clear_screen()
+            clear_screen()  # Clear the screen before displaying menu options
             print(colored(f"------------------------------ {colored("Gerenciar Usuários", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
-            print("1 - Listar Usuários")
-            print("2 - Criar Usuário")
-            print("3 - Excluir Usuário")
-            print("4 - Voltar ao Menu Admin")
+            print("1 - Listar Usuários")      # Option to list all users
+            print("2 - Criar Usuário")        # Option to create a new user
+            print("3 - Excluir Usuário")      # Option to delete a user
+            print("4 - Voltar ao Menu Admin") # Option to return to the admin menu
 
             try:
                 user_input = int(input("Escolha sua opção: "))
             except ValueError:
+                # Notify the user of an invalid selection
                 print("Opção inválida! Digite um número.")
                 continue
 
             if user_input == 1:
+                # Retrieve and display all users
                 users = facade.list_users()
                 print("\nUsuários cadastrados:")
                 for user in users:
@@ -385,13 +421,14 @@ class AdminUser(UserRole):
                 input("\nPressione Enter para continuar...")
 
             elif user_input == 2:
-                clear_screen()
-                territories = facade.show_territory_null()
+                clear_screen() # Clear the screen for new user creation
+                territories = facade.show_territory_null() # Get territories without an assigned owner
                 
                 if territories:
                     print(colored(f"------------------------------ {colored("Novo Usuário", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                     print("Pressione Enter para cancelar...")
                     
+                    # Prompt for user details
                     name = input("Nome: ")
                     if name.strip() == "":
                         print(colored("Criação de usuário cancelada...", "yellow"))
@@ -414,7 +451,8 @@ class AdminUser(UserRole):
                     if phone.strip() == "":
                         print(colored("Criação de usuário cancelada...", "yellow"))
                         time.sleep(1.5)
-                        return 
+                        return
+                    # Display available territories without an owner
                     territories = facade.show_territory_null()
                     existing_ids = []
                     for territorie in territories:
@@ -429,31 +467,29 @@ class AdminUser(UserRole):
                         print(colored("Criação de usuário cancelada...", "yellow"))
                         time.sleep(1.5)
                         return 
+                    
+                    # Create the new user via the facade
                     territory_id_int = int(territory_id)
                     facade.create_user(name, password, email, phone, territory_id_int)
                     print(colored("Usuário criado com sucesso!", "green"))
                     time.sleep(1.5)
                 else:
-                    # Limpa a tela
-                    clear_screen()
+                    # Clear screen and notify if no available territory exists
+                    clear_screen()                   
                     
-                    # Recupera os territórios sem dono
-                    territories = facade.show_territory_null()
+                    territories = facade.show_territory_null()                    
                     
-                    # Verifica se existem territórios disponíveis
                     if not territories:
-                        # Se não houver nenhum território disponível
                         print(colored("Não foi possível criar o usuário! Não existe nenhum território disponível.", "red"))
                     else:
-                        # Se existir ao menos um território, significa que todos já possuem usuário associado
                         print(colored("Não foi possível criar o usuário! Todos os territórios disponíveis já possuem dono.", "red"))
                     
                     input("\nPressione Enter para continuar...")
 
             elif user_input == 3:
-                clear_screen()
+                clear_screen()  # Clear screen for user deletion
                 print(colored(f"------------------------------ {colored("Excluir Usuário", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
-                users = facade.list_users()
+                users = facade.list_users() # Retrieve all users
                 print("Usuários cadastrados: ")
                 for user in users:
                     print(f"ID: {user.id}, Nome: {user.name}, E-mail: {user.email}, Celular: {user.celphone}")
@@ -466,29 +502,38 @@ class AdminUser(UserRole):
                     return 
                 
                 id_delete_int = int(id_delete)
+                # Delete the user via the facade
                 facade.delete_user(id_delete_int)
                 print(colored("Usuário excluído com sucesso!", "green"))
                 time.sleep(1.5)
 
             elif user_input == 4:
-                return
+                return # Return to the admin menu
 
     def animal_options(self, facade):
+        """
+        Displays the animal management menu and processes administrator actions
+        for listing, adding, or deleting animals.
+        
+        :param facade: An instance of SystemFacade for system interactions.
+        """
         while True:
-            clear_screen()
+            clear_screen()  # Clear screen before displaying animal options
             print(colored(f"------------------------------ {colored("Gerenciar Animais", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
-            print("1 - Listar Animais")
-            print("2 - Adicionar Animal")
-            print("3 - Excluir Animal")
-            print("4 - Voltar ao Menu Admin")
+            print("1 - Listar Animais")         # Option to list all animals
+            print("2 - Adicionar Animal")       # Option to add a new animal
+            print("3 - Excluir Animal")         # Option to delete an animal
+            print("4 - Voltar ao Menu Admin")   # Option to return to the admin menu
             
             try:
                 user_input = int(input("Escolha sua opção: "))
             except ValueError:
+                # Notify user if input is not a valid number
                 print("Opção inválida! Digite um número.")
                 continue
 
             if user_input == 1:
+                # List all animals
                 animals = facade.list_animais()
                 print("\nAnimais cadastrados:")
                 if animals:
@@ -500,10 +545,11 @@ class AdminUser(UserRole):
                     time.sleep(1.5)
                     
             elif user_input == 2:
-                clear_screen()
+                clear_screen() # Clear screen to add a new animal
                 print(colored(f"------------------------------ {colored("Novo Animal", "light_blue")} {colored("------------------------------", "light_cyan")}", "light_cyan"))
                 print("Pressione Enter para cancelar...")
                 
+                # Prompt for new animal details
                 name = input("Nome: ")
                 if name.strip() == "":
                     print(colored("Criação do animal cancelada...", "yellow"))
@@ -522,6 +568,7 @@ class AdminUser(UserRole):
                     time.sleep(1.5)
                     return 
                 
+                # List existing territories for animal association
                 territories = facade.list_territories()
                 print("Territórios cadastrados: ")
                 existing_ids = []
@@ -530,6 +577,7 @@ class AdminUser(UserRole):
                     print(f"ID: {territory.id}, Nome: {territory.name}, X: {territory.x}, Y: {territory.y}")  
                 territory_id = int(input("ID do território: "))
                 if territory_id not in existing_ids:
+                    # Notify if the chosen territory does not exist
                     print(colored("Erro: Território Inexistente", "red"))
                     time.sleep(1.5)
                     return
@@ -538,17 +586,18 @@ class AdminUser(UserRole):
                     time.sleep(1.5)
                     return 
                 
+                # Create a new animal associated with the territory via the facade
                 facade.add_animal_to_territory(name, specie, age, territory_id)
                 print(colored("Animal adicionado com sucesso!", "green"))
                 time.sleep(1.5)
 
             elif user_input == 3:
-                clear_screen()
+                clear_screen() # Clear screen for animal deletion
                 print(colored(f"----------------------------------------------- {colored("Excluir Animal", "light_blue")} {colored("----------------------------------------------", "light_cyan")}", "light_cyan"))
-                animals = facade.list_animais()
+                animals = facade.list_animais() # Retrieve the list of animals
                 print("Animais cadastrados:")
                 if animals:
-                    existing_ids = []
+                    existing_ids = [] # List to store animal IDs
                     for animal in animals:
                         existing_ids.append(animal[0])
                         print(f"ID: {animal[0]}, Nome: {animal[1]}, Espécie: {animal[2]}, Idade: {animal[3]}, Descrição: {animal[4]}, ID território: {animal[5]},ID rastreador: {animal[6]}")
@@ -563,14 +612,16 @@ class AdminUser(UserRole):
                         time.sleep(1.5)
                         return                    
                     id_delete_int = int(id_delete)
+                    # Delete the selected animal via the facade
                     facade.delete_animal(id_delete_int)
                     print(colored("Animal excluído com sucesso!", "green"))
                     time.sleep(1.5)
                 else:
+                    # Inform the admin if there are no animals to delete
                     print(colored("Nenhum animal para excluir!", "red"))
                     time.sleep(1.5)
             elif user_input == 4:
-                return
+                return # Return to the admin menu
 
 # Tela de login
 def login_screen(facade):
