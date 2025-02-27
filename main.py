@@ -57,8 +57,19 @@ def initialize_animal_trackers():
 
 # Classe abstrata para os papéis dos usuários
 class UserRole(ABC):
+    """
+    An abstract base class representing the role of a user.
+    Subclasses should implement the show_menu method to define
+    the specific behavior for displaying the menu for each role.
+    """
     @abstractmethod
     def show_menu(self, facade):
+        """
+        Abstract method to display the menu for the user role.
+        This method must be implemented by subclasses.
+
+        :param facade: An instance of the SystemFacade to interact with the system.
+        """
         pass
 
 # Classe para usuários comuns (apenas visualizar territórios)
