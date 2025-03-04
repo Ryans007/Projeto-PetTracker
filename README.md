@@ -152,4 +152,3 @@ The system starts with a pre-configured default login. Use the following credent
 
 ## **Conclusion**
 The **"PetTracker"** project is a robust animal tracking system utilizing **design patterns** to keep the code organized and efficient. It provides essential features for **territory and animal management**, with an intuitive interface for different user types.
-
